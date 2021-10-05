@@ -20,10 +20,3 @@ void main(void)
         printf("\n");
     }
 }
-
-printf();
-printf();
-printf();
-printf();
-printf();
-printf();
