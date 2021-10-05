@@ -27,3 +27,7 @@ void main(void)
 
 
 
+asd
+fas
+df
+_CRT_ABS_DEFINEDasdf
