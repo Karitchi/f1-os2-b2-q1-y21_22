@@ -16,20 +16,33 @@ void generateProccess(pid_t *pId, int sizeofCars)
     }
 }
 
-void generateSectionsTimes(float sector[3][7])
+void generateSectionsTimes(float sector[7][3], int *sectorHeadX)
 {
+    wait();
     srand(time(NULL));
-
-    printf("%f\n", (float)rand() / (float)(RAND_MAX / 9));
+    for (int i = 0; i < 3; i++)
+    {
+        sector[*sectorHeadX][i] = (float)rand() / (float)(RAND_MAX / 9);
+        printf("%f %d\n", sector[*sectorHeadX][i], *sectorHeadX);
+    }
+    *sectorHeadX++;
 }
 
 void main(void)
 {
     pid_t pId = 0;
     int cars[] = {1, 2, 3, 4, 5};
-    float sector[3][7];
+    float sector[7][3];
+    int sectorHeadX = 0;
     int sizeofCars = sizeof(cars) / sizeof(cars[0]);
 
     generateProccess(&pId, sizeofCars);
-    generateSectionsTimes(sector);
+    if (pId > 0)
+    {
+        generateSectionsTimes(sector, &sectorHeadX);
+    }
+    if (pId == 0)
+    {
+        // printf("asd : %f\n", sector[0][0]);
+    }
 }
