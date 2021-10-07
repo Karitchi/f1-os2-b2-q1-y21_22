@@ -2,47 +2,65 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+// #include <sys/wait.h>
+// #include <sys/types.h>
 
-// genere un processus pour chaque voiture.
-void generateProccess(pid_t *pId, int sizeofCars)
+typedef struct car
 {
-    for (int i = 0; i < sizeofCars; i++)
+    float sector1;
+    float sector2;
+    float sector3;
+} structCar;
+
+void generateChilds(int numberOfCars, int *pId)
+{
+    for (int i = 0; i < numberOfCars; i++)
     {
         *pId = fork();
-        if (*pId > 0)
+        if (!*pId)
         {
             break;
         }
     }
 }
 
-void generateSectionsTimes(float sector[7][3], int *sectorHeadX)
+void generateRandomTimes(structCar *cars, int numberOfCars, int *positionInCars)
 {
-    wait();
     srand(time(NULL));
-    for (int i = 0; i < 3; i++)
+
+    // for (int i = 0; i < numberOfCars; i++)
+    // {
+    //     cars[i].sector1 = ((35 - 45) * ((float)rand() / RAND_MAX)) + 35;
+    //     cars[i].sector2 = ((30 - 40) * ((float)rand() / RAND_MAX)) + 30;
+    //     cars[i].sector3 = ((32 - 48) * ((float)rand() / RAND_MAX)) + 32;
+    // }
+}
+
+void printSectors(structCar *cars, int numberOfCars)
+{
+    for (int i = 0; i < numberOfCars; i++)
     {
-        sector[*sectorHeadX][i] = (float)rand() / (float)(RAND_MAX / 9);
-        printf("%f %d\n", sector[*sectorHeadX][i], *sectorHeadX);
+        printf("voiture %d :\n\t-secteur1 : %f\n\t-secteur2 : %f\n\t-secteur3 : %f\n\n",
+               i + 1, cars[i].sector1, cars[i].sector2, cars[i].sector3);
     }
-    *sectorHeadX++;
 }
 
 void main(void)
 {
-    pid_t pId = 0;
-    int cars[] = {1, 2, 3, 4, 5};
-    float sector[7][3];
-    int sectorHeadX = 0;
-    int sizeofCars = sizeof(cars) / sizeof(cars[0]);
+    int carsNumber[] = {1, 2, 3, 4, 5};
+    int numberOfCars = sizeof(carsNumber) / 4;
+    int positionInCars = 0;
+    int pId = 0;
+    structCar cars[numberOfCars];
 
-    generateProccess(&pId, sizeofCars);
-    if (pId > 0)
+    generateChilds(numberOfCars, &pId);
+    if (!pId)
     {
-        generateSectionsTimes(sector, &sectorHeadX);
+        generateRandomTimes(cars, numberOfCars, &positionInCars);
     }
-    if (pId == 0)
-    {
-        // printf("asd : %f\n", sector[0][0]);
-    }
+
+    // if (!pId)
+    // {
+    //     printSectors(cars, numberOfCars);
+    // }
 }
