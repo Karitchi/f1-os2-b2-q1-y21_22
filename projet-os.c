@@ -24,16 +24,16 @@ void generateChilds(int numberOfCars, int *pId)
     }
 }
 
-void generateRandomTimes(structCar *cars, int numberOfCars, int *positionInCars)
+void generateRandomTimes(structCar *cars, int *positionInCars)
 {
+    wait();
     srand(time(NULL));
 
-    // for (int i = 0; i < numberOfCars; i++)
-    // {
-    //     cars[i].sector1 = ((35 - 45) * ((float)rand() / RAND_MAX)) + 35;
-    //     cars[i].sector2 = ((30 - 40) * ((float)rand() / RAND_MAX)) + 30;
-    //     cars[i].sector3 = ((32 - 48) * ((float)rand() / RAND_MAX)) + 32;
-    // }
+    cars[*positionInCars].sector1 = ((35 - 45) * ((float)rand() / RAND_MAX)) + 35;
+    cars[*positionInCars].sector2 = ((30 - 40) * ((float)rand() / RAND_MAX)) + 30;
+    cars[*positionInCars].sector3 = ((32 - 48) * ((float)rand() / RAND_MAX)) + 32;
+
+    *positionInCars++;
 }
 
 void printSectors(structCar *cars, int numberOfCars)
@@ -56,11 +56,11 @@ void main(void)
     generateChilds(numberOfCars, &pId);
     if (!pId)
     {
-        generateRandomTimes(cars, numberOfCars, &positionInCars);
+        generateRandomTimes(cars, &positionInCars);
     }
 
-    // if (!pId)
-    // {
-    //     printSectors(cars, numberOfCars);
-    // }
+    if (pId)
+    {
+        printSectors(cars, numberOfCars);
+    }
 }
