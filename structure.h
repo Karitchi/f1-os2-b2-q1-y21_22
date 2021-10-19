@@ -1,9 +1,12 @@
 typedef struct shareMemory
 {
-    struct cars
+    struct car
     {
+        int carNumber;
         float sector[3];
-    } car[3];
+        float lapTime;
+        float timeSpent;
+    } car[20];
 
     int seed;
 } shareMemory;
