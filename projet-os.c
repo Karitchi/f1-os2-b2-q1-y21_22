@@ -14,39 +14,73 @@ void generateChilds(int *pId, int *childId)
     }
 }
 
-void attributeNumberToEachCar(shareMemory *shareMemory, int carsNumber[], int childId)
+void attributeNumberToEachCar(sharedMemory *sharedMemory, int carsNumber[], int childId)
 {
-    shareMemory->car[childId].carNumber = carsNumber[childId];
+    sharedMemory->car[childId].carNumber = carsNumber[childId];
 }
 
-float generateRandomNumber(shareMemory *shareMemory)
+float generateRandomNumber(sharedMemory *sharedMemory)
 {
-    srand(shareMemory->seed);
-    shareMemory->seed++;
+    srand(sharedMemory->seed);
+    sharedMemory->seed++;
     return (float)rand() / (float)(RAND_MAX)*9 + 40;
 }
 
-void generateTimesP1(shareMemory *shareMemory, int childId)
+void generateTimesP1(sharedMemory *sharedMemory, int childId)
 {
     for (int i = 0; i < 3; i++)
     {
-        shareMemory->car[childId].sector[i] = generateRandomNumber(shareMemory);
+        sharedMemory->car[childId].sector[i] = generateRandomNumber(sharedMemory);
     }
 }
 
-void calculateLapTime(shareMemory *shareMemory, int childId)
+void calculateLapTime(sharedMemory *sharedMemory, int childId)
 {
-    shareMemory->car[childId].lapTime = 0;
+    sharedMemory->car[childId].lapTime = 0;
 
     for (int i = 0; i < 3; i++)
     {
-        shareMemory->car[childId].lapTime += shareMemory->car[childId].sector[i];
+        sharedMemory->car[childId].lapTime += sharedMemory->car[childId].sector[i];
     }
 }
 
-void calculateTimeSpent(shareMemory *shareMemory, int childId)
+void calculateTotalTime(sharedMemory *sharedMemory, int childId)
 {
-    shareMemory->car[childId].timeSpent += shareMemory->car[childId].lapTime;
+    for (int i = 0; i < 3; i++)
+    {
+        sharedMemory->car[childId].totalTime += sharedMemory->car[childId].sector[i];
+    }
+}
+
+void storeAllLapTimes(sharedMemory *sharedMemory, int childId)
+{
+    sharedMemory->allLapTimes[childId] = sharedMemory->car[childId].lapTime;
+}
+
+void swap(sharedMemory *sharedMemory, int j)
+{
+    float temp = sharedMemory->allLapTimes[j];
+    sharedMemory->allLapTimes[j] = sharedMemory->allLapTimes[j + 1];
+    sharedMemory->allLapTimes[j + 1] = temp;
+}
+
+void sortLapTimes(sharedMemory *sharedMemory)
+{
+    for (int i = 0; i < 20 - 1; i++)
+    {
+        for (int j = 0; j < 20 - i - 1; j++)
+        {
+            if (sharedMemory->allLapTimes[j] > sharedMemory->allLapTimes[j + 1])
+            {
+                swap(sharedMemory, j);
+            }
+        }
+    }
+    for (int i = 0; i < 20; i++)
+    {
+        printf("%f\n", sharedMemory->allLapTimes[i]);
+    }
+    printf("%f\n", sharedMemory->allLapTimes[19]);
 }
 
 void main(void)
@@ -54,50 +88,65 @@ void main(void)
     int shmId;
     int pId;
     int childId;
-    int numberOfCarsFinished = 0;
-    float timeOfP1 = 5400;
+    int lapLength = 9;
+    const int timeOfP1P2 = 1000;
+    const int RACE_LENGTH = 305;
     int carsNumber[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
 
-    shareMemory *shareMemory;
+    sharedMemory *sharedMemory;
 
-    shmId = shmget(1011, sizeof(*shareMemory), IPC_CREAT | 0666);
-    shareMemory = shmat(shmId, NULL, 0);
+    shmId = shmget(1662, sizeof(*sharedMemory), IPC_CREAT | 0666);
+    sharedMemory = shmat(shmId, NULL, 0);
 
     //Stockage du seed dans la memoire partagee pour permettre aux fils de la modifier.
-    shareMemory->seed = time(NULL);
+    sharedMemory->seed = time(NULL);
 
+    sharedMemory->numberOfCarsFinished = 0;
     generateChilds(&pId, &childId);
 
     if (!pId)
     {
-        shareMemory->car[childId].timeSpent = 0;
+        sharedMemory->car[childId].totalTime = 0;
 
-        attributeNumberToEachCar(shareMemory, carsNumber, childId);
-        int i = 0;
-        while (shareMemory->car[childId].timeSpent < timeOfP1)
+        attributeNumberToEachCar(sharedMemory, carsNumber, childId);
+
+        while (sharedMemory->car[childId].totalTime < timeOfP1P2)
         {
-            generateTimesP1(shareMemory, childId);
-            calculateLapTime(shareMemory, childId);
-            calculateTimeSpent(shareMemory, childId);
-            sleep(0.5);
+            generateTimesP1(sharedMemory, childId);
+            calculateLapTime(sharedMemory, childId);
+            calculateTotalTime(sharedMemory, childId);
+            storeAllLapTimes(sharedMemory, childId);
+
+            sleep(1);
         }
-        numberOfCarsFinished++;
+        sharedMemory->numberOfCarsFinished++;
     }
     else
     {
-        while (numberOfCarsFinished != 20)
+        while (sharedMemory->numberOfCarsFinished != 20)
         {
-            for (int i = 0; i < 20; i++)
-            {
-                printf("Car : %d\n", shareMemory->car[i].carNumber);
-                printf("Lap time : %.3f\n", shareMemory->car[i].lapTime);
-                printf("time spent : %.3f\n", shareMemory->car[i].timeSpent);
-                for (int j = 0; j < 3; j++)
-                {
-                    printf("%.3f\n", shareMemory->car[i].sector[j]);
-                }
-                printf("\n");
-            }
+            sortLapTimes(sharedMemory);
+
+            // for (int i = 0; i < 20; i++)
+            // {
+            //     printf("%f\n", sharedMemory->allLapTimes[i]);
+            // }
+
+            // system("clear");
+            // printf("|----------------------------------------------------------------|\n");
+            // printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | total time |\n");
+            // for (int i = 0; i < 20; i++)
+            // {
+            //     printf("|----------------------------------------------------------------|\n");
+            //     printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |  %8.3f  |\n",
+            //            sharedMemory->car[i].carNumber,
+            //            sharedMemory->car[i].sector[0],
+            //            sharedMemory->car[i].sector[1],
+            //            sharedMemory->car[i].sector[2],
+            //            sharedMemory->car[i].lapTime,
+            //            sharedMemory->car[i].totalTime);
+            // }
+            // printf("|----------------------------------------------------------------|\n");
             sleep(1);
         }
     }
