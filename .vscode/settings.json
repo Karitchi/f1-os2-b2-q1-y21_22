@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "include.h": "c",
+        "structure.h": "c"
+    }
+}
