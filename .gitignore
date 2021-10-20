@@ -1,6 +1,4 @@
-.vscode/launch.json
-.vscode/tasks.json
-vscode/settings.json
+.vscode
 test.c
 test
 projet-os
