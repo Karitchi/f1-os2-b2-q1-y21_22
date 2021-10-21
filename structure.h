@@ -9,7 +9,7 @@ typedef struct sharedMemory
         float sector[3];
         float lapTime;
         float totalTime;
-        float numberOfKmTraveled;
+        int pitStops;
     } car[20];
 
 } sharedMemory;
