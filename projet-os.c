@@ -12,7 +12,7 @@ void main(void)
     sharedMemory *sharedMemory;
 
     // Create shared memory and store it in struct.
-    shmId = shmget(2763, sizeof(*sharedMemory), IPC_CREAT | 0666);
+    shmId = shmget(23452, sizeof(*sharedMemory), IPC_CREAT | 0666);
     sharedMemory = shmat(shmId, NULL, 0);
 
     //Store time in seed to allow random times to be generated.
@@ -49,6 +49,7 @@ void main(void)
     }
     else
     {
+        initializeBestSectors(sharedMemory);
         while (sharedMemory->numberOfCarsFinished != 20)
         {
             findBestSectors(sharedMemory, childId);

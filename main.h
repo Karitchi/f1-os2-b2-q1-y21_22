@@ -14,15 +14,24 @@ void generateChilds(int *pId, int *childId)
     }
 }
 
+void initializeBestSectors(sharedMemory *sharedMemory)
+{
+    for (int i = 0; i < 3; i++)
+    {
+        sharedMemory->bestSectorTimes[i] = INFINITY;
+    }
+}
+
 void findBestSectors(sharedMemory *sharedMemory, int childId)
 {
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 3; i++)
     {
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; j < 20; j++)
         {
-            if (sharedMemory->car[i].sector[j] < sharedMemory->car[i + 1].sector[j])
+            if (sharedMemory->car[j].sector[i] < sharedMemory->bestSectorTimes[i])
             {
-                sharedMemory->bestSectors[j] = sharedMemory->car[i].sector[j];
+                sharedMemory->bestSectorTimes[i] = sharedMemory->car[j].sector[i];
+                sharedMemory->bestSectorCars[i] = sharedMemory->car[j].carNumber;
             }
         }
     }
@@ -79,8 +88,14 @@ void display(sharedMemory *sharedMemory)
         }
     }
     printf("|----------------------------------------------------------------------------------|\n\n");
-    printf("best sectors 1 : %.3f  2 : %.3f  3 : %.3f\n",
-           sharedMemory->bestSectors[0],
-           sharedMemory->bestSectors[1],
-           sharedMemory->bestSectors[2]);
+    printf("|--------------------------------------------------------|\n");
+    printf("| best sector 1    | best sector 2    | best sector 3    |\n");
+    printf("|--------------------------------------------------------|\n");
+    for (int i = 0; i < 3; i++)
+    {
+        printf("|  %2d : %.3f     ",
+               sharedMemory->bestSectorCars[i],
+               sharedMemory->bestSectorTimes[i]);
+    }
+    printf("|\n|--------------------------------------------------------|\n");
 }
