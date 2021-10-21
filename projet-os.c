@@ -3,8 +3,9 @@
 void main(void)
 {
     int shmId, pId, childId;
-    int lapLength = 9;
-    const int timeOfP1P2 = 1000;
+    char userRaceChoice[2];
+    const int timeOfP1P2 = 5400;
+    const int timeOfP3 = 3600;
     const int RACE_LENGTH = 305;
     int carsNumber[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
 
@@ -12,7 +13,7 @@ void main(void)
     sharedMemory *sharedMemory;
 
     // Create shared memory and store it in struct.
-    shmId = shmget(23452, sizeof(*sharedMemory), IPC_CREAT | 0666);
+    shmId = shmget(2, sizeof(*sharedMemory), IPC_CREAT | 0666);
     sharedMemory = shmat(shmId, NULL, 0);
 
     //Store time in seed to allow random times to be generated.
@@ -25,7 +26,7 @@ void main(void)
     if (!pId)
     {
         sharedMemory->car[childId].totalTime = 0;
-        sharedMemory->car[childId].pitStops = 0;
+        sharedMemory->car[childId].out = 0;
         sharedMemory->car[childId].numberOfLaps = 0;
 
         //Attribute a number to each car.
@@ -34,14 +35,15 @@ void main(void)
         // Attribute an infinite nuber as first best lap.
         sharedMemory->car[childId].bestLap = INFINITY;
 
-        while (sharedMemory->car[childId].totalTime < timeOfP1P2)
+        while (sharedMemory->car[childId].totalTime < timeOfP1P2 && !sharedMemory->car[childId].out)
         {
-
+            sharedMemory->car[childId].isPitStop = 0;
             generateSectorsTimesP1(sharedMemory, childId);
             calculateLapTime(sharedMemory, childId);
             findBestLap(sharedMemory, childId);
             calculateTotalTime(sharedMemory, childId);
             generatePitStops(sharedMemory, childId);
+            generateOut(sharedMemory, childId, pId);
             sharedMemory->car[childId].numberOfLaps++;
             sleep(1);
         }

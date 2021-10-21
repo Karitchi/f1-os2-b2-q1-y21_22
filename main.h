@@ -58,36 +58,64 @@ void BubbleSort(sharedMemory *sharedMemory)
 void display(sharedMemory *sharedMemory)
 {
     system("clear");
-    printf("|----------------------------------------------------------------------------------|\n");
-    printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | Best lap time  | pit stop(s) |\n");
+    printf("|----------------------------------------------------------------------------------------|\n");
+    printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | Best lap time  | pit stop(s) | out |\n");
     for (int i = 0; i < 20; i++)
     {
-        if (i == 0)
+        if (sharedMemory->car[i].out)
         {
-            printf("|----------------------------------------------------------------------------------|\n");
-            printf(GRN "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |     %2d      |\n" RESET,
+            printf("|----------------------------------------------------------------------------------------|\n");
+            printf(RED "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |     %2d      |  %d  |\n" RESET,
                    sharedMemory->car[i].carNumber,
                    sharedMemory->car[i].sector[0],
                    sharedMemory->car[i].sector[1],
                    sharedMemory->car[i].sector[2],
                    sharedMemory->car[i].lapTime,
                    sharedMemory->car[i].bestLap,
-                   sharedMemory->car[i].pitStops);
+                   sharedMemory->car[i].isPitStop,
+                   sharedMemory->car[i].out);
+        }
+        else if (sharedMemory->car[i].isPitStop)
+        {
+            printf("|----------------------------------------------------------------------------------------|\n");
+            printf(YEL "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |     %2d      |  %d  |\n" RESET,
+                   sharedMemory->car[i].carNumber,
+                   sharedMemory->car[i].sector[0],
+                   sharedMemory->car[i].sector[1],
+                   sharedMemory->car[i].sector[2],
+                   sharedMemory->car[i].lapTime,
+                   sharedMemory->car[i].bestLap,
+                   sharedMemory->car[i].isPitStop,
+                   sharedMemory->car[i].out);
+        }
+        else if (i == 0)
+        {
+            printf("|----------------------------------------------------------------------------------------|\n");
+            printf(GRN "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |     %2d      |  %d  |\n" RESET,
+                   sharedMemory->car[i].carNumber,
+                   sharedMemory->car[i].sector[0],
+                   sharedMemory->car[i].sector[1],
+                   sharedMemory->car[i].sector[2],
+                   sharedMemory->car[i].lapTime,
+                   sharedMemory->car[i].bestLap,
+                   sharedMemory->car[i].isPitStop,
+                   sharedMemory->car[i].out);
         }
         else
         {
-            printf("|----------------------------------------------------------------------------------|\n");
-            printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |     %2d      |\n",
+            printf("|----------------------------------------------------------------------------------------|\n");
+            printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |     %2d      |  %d  |\n",
                    sharedMemory->car[i].carNumber,
                    sharedMemory->car[i].sector[0],
                    sharedMemory->car[i].sector[1],
                    sharedMemory->car[i].sector[2],
                    sharedMemory->car[i].lapTime,
                    sharedMemory->car[i].bestLap,
-                   sharedMemory->car[i].pitStops);
+                   sharedMemory->car[i].isPitStop,
+                   sharedMemory->car[i].out);
         }
     }
-    printf("|----------------------------------------------------------------------------------|\n\n");
+    printf("|----------------------------------------------------------------------------------------|\n\n");
     printf("|--------------------------------------------------------|\n");
     printf("| best sector 1    | best sector 2    | best sector 3    |\n");
     printf("|--------------------------------------------------------|\n");

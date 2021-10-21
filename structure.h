@@ -13,7 +13,8 @@ typedef struct sharedMemory
         float bestLap;
         int numberOfLaps;
         float totalTime;
-        int pitStops;
+        int isPitStop;
+        int out;
     } car[20];
 
 } sharedMemory;

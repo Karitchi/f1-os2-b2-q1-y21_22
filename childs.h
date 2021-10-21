@@ -38,8 +38,18 @@ void generatePitStops(sharedMemory *sharedMemory, int childId)
 
     if (random > 0.9)
     {
-        sharedMemory->car[childId].pitStops++;
+        sharedMemory->car[childId].isPitStop = 1;
         sharedMemory->car[childId].lapTime += generateRandomNumber(sharedMemory, 9, 5);
+    }
+}
+
+void generateOut(sharedMemory *sharedMemory, int childId, int pId)
+{
+    float random = generateRandomNumber(sharedMemory, 1, 0);
+
+    if (random > 0.998)
+    {
+        sharedMemory->car[childId].out = 1;
     }
 }
 
