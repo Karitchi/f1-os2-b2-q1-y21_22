@@ -5,4 +5,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <semaphore.h>
+
 #include "structure.h"
+#include "childs.h"
+#include "main.h"
