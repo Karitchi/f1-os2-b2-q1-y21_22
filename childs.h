@@ -49,7 +49,7 @@ void generateOut(sharedMemory *sharedMemory, int childId, int pId)
 
     if (random > 0.998)
     {
-        sharedMemory->car[childId].out = 1;
+        sharedMemory->car[childId].isOut = 1;
     }
 }
 

@@ -2,6 +2,7 @@ typedef struct sharedMemory
 {
     int seed;
     int numberOfCarsFinished;
+    int counterForCarPosition;
     float allLapTimes[20];
     float bestSectorTimes[3];
     int bestSectorCars[3];
@@ -14,7 +15,16 @@ typedef struct sharedMemory
         int numberOfLaps;
         float totalTime;
         int isPitStop;
-        int out;
+        int isOut;
+        int isEliminated;
     } car[20];
 
 } sharedMemory;
+
+typedef struct sortedCars
+{
+    int carNumber;
+    int numberOfLaps;
+    float totalTime;
+    float averageSpeed;
+} sortedCars;
