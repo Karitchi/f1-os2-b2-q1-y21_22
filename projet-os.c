@@ -1,90 +1,23 @@
 #include "include.h"
-#include "colors.h"
-
-void generateChilds(int *pId, int *childId)
-{
-    for (int i = 0; i < 20; i++)
-    {
-        *pId = fork();
-
-        if (!*pId)
-        {
-            *childId = i;
-            break;
-        }
-    }
-}
-
-void attributeNumberToEachCar(sharedMemory *sharedMemory, int carsNumber[], int childId)
-{
-    sharedMemory->car[childId].carNumber = carsNumber[childId];
-}
-
-float generateRandomNumber(sharedMemory *sharedMemory)
-{
-    srand(sharedMemory->seed);
-    sharedMemory->seed++;
-    return (float)rand() / (float)(RAND_MAX)*9 + 40;
-}
-
-void generateTimesP1(sharedMemory *sharedMemory, int childId)
-{
-    for (int i = 0; i < 3; i++)
-    {
-        sharedMemory->car[childId].sector[i] = generateRandomNumber(sharedMemory);
-    }
-}
-
-void calculateLapTime(sharedMemory *sharedMemory, int childId)
-{
-    sharedMemory->car[childId].lapTime = 0;
-
-    for (int i = 0; i < 3; i++)
-    {
-        sharedMemory->car[childId].lapTime += sharedMemory->car[childId].sector[i];
-    }
-}
-
-void calculateTotalTime(sharedMemory *sharedMemory, int childId)
-{
-    for (int i = 0; i < 3; i++)
-    {
-        sharedMemory->car[childId].totalTime += sharedMemory->car[childId].sector[i];
-    }
-}
-
-void BubbleSort(sharedMemory *sharedMemory)
-{
-    int i, j;
-    struct car temp;
-    for (i = 0; i < (20 - 1); ++i)
-    {
-        for (j = 0; j < (20 - 1 - i); ++j)
-        {
-            if (sharedMemory->car[j].lapTime > sharedMemory->car[j + 1].lapTime)
-            {
-                temp = sharedMemory->car[j + 1];
-                sharedMemory->car[j + 1] = sharedMemory->car[j];
-                sharedMemory->car[j] = temp;
-            }
-        }
-    }
-}
 
 void main(void)
 {
     int shmId, pId, childId;
-    int lapLength = 9;
-    const int timeOfP1P2 = 1000;
+    char userRaceChoice[2];
+    const int timeOfP1P2 = 500;
+    const int timeOfP3 = 3600;
     const int RACE_LENGTH = 305;
     int carsNumber[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
-
+    struct sortedCars sortedCars[20];
     sharedMemory *sharedMemory;
 
-    shmId = shmget(1663, sizeof(*sharedMemory), IPC_CREAT | 0666);
+    // scanf("%s\n", userRaceChoice);
+
+    // Create shared memory and store it in struct.
+    shmId = shmget(6, sizeof(*sharedMemory), IPC_CREAT | 0666);
     sharedMemory = shmat(shmId, NULL, 0);
 
-    //Stockage du seed dans la memoire partagee pour permettre aux fils de la modifier.
+    //Store time in seed to allow random times to be generated.
     sharedMemory->seed = time(NULL);
 
     sharedMemory->numberOfCarsFinished = 0;
@@ -94,53 +27,46 @@ void main(void)
     if (!pId)
     {
         sharedMemory->car[childId].totalTime = 0;
+        sharedMemory->car[childId].isOut = 0;
+        sharedMemory->car[childId].numberOfLaps = 0;
 
-        attributeNumberToEachCar(sharedMemory, carsNumber, childId);
+        //Attribute a number to each car.
+        sharedMemory->car[childId].carNumber = carsNumber[childId];
 
-        while (sharedMemory->car[childId].totalTime < timeOfP1P2)
+        // Attribute an infinite number as first best lap.
+        sharedMemory->car[childId].bestLap = INFINITY;
+
+        while (sharedMemory->car[childId].totalTime < timeOfP1P2 && !sharedMemory->car[childId].isOut)
         {
-
-            generateTimesP1(sharedMemory, childId);
+            sharedMemory->car[childId].isPitStop = 0;
+            generateSectorsTimesP1(sharedMemory, childId);
             calculateLapTime(sharedMemory, childId);
+            findBestLap(sharedMemory, childId);
             calculateTotalTime(sharedMemory, childId);
+            generatePitStops(sharedMemory, childId);
+            generateOut(sharedMemory, childId, pId);
+            sharedMemory->car[childId].numberOfLaps++;
             sleep(1);
         }
         sharedMemory->numberOfCarsFinished++;
     }
     else
     {
+        initializeBestSectors(sharedMemory);
+        initializeIsOut(sharedMemory);
         while (sharedMemory->numberOfCarsFinished != 20)
         {
-            BubbleSort(sharedMemory);
-
-            system("clear");
-            printf("|---------------------------------------------------|\n");
-            printf("| car  | sector 1 | sector 2 | sector 3 | lap time  |\n");
-            for (int i = 0; i < 20; i++)
-            {
-                if (i == 0)
-                {
-                    printf("|---------------------------------------------------|\n");
-                    printf(GRN "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |\n" RESET,
-                           sharedMemory->car[i].carNumber,
-                           sharedMemory->car[i].sector[0],
-                           sharedMemory->car[i].sector[1],
-                           sharedMemory->car[i].sector[2],
-                           sharedMemory->car[i].lapTime);
-                }
-                else
-                {
-                    printf("|---------------------------------------------------|\n");
-                    printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |\n",
-                           sharedMemory->car[i].carNumber,
-                           sharedMemory->car[i].sector[0],
-                           sharedMemory->car[i].sector[1],
-                           sharedMemory->car[i].sector[2],
-                           sharedMemory->car[i].lapTime);
-                }
-            }
-            printf("|---------------------------------------------------|\n");
+            findBestSectors(sharedMemory, childId);
+            sortCarsByBestLap(sharedMemory);
+            display(sharedMemory);
             sleep(1);
+        }
+        if (userRaceChoice[0] == "q")
+        {
+            storeCarsInfoForSorting(sharedMemory, sortedCars);
+            calculateAverageSpeed(sortedCars);
+            sortCarsByAverageSpeed(sortedCars);
+            eliminate5LastCars(sharedMemory, sortedCars);
         }
     }
 }
