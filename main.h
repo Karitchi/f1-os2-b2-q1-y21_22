@@ -14,6 +14,20 @@ void generateChilds(int *pId, int *childId)
     }
 }
 
+void findBestSectors(sharedMemory *sharedMemory, int childId)
+{
+    for (int i = 0; i < 20; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            if (sharedMemory->car[i].sector[j] < sharedMemory->car[i + 1].sector[j])
+            {
+                sharedMemory->bestSectors[j] = sharedMemory->car[i].sector[j];
+            }
+        }
+    }
+}
+
 void BubbleSort(sharedMemory *sharedMemory)
 {
     int i, j;
@@ -64,5 +78,9 @@ void display(sharedMemory *sharedMemory)
                    sharedMemory->car[i].pitStops);
         }
     }
-    printf("|----------------------------------------------------------------------------------|\n");
+    printf("|----------------------------------------------------------------------------------|\n\n");
+    printf("best sectors 1 : %.3f  2 : %.3f  3 : %.3f\n",
+           sharedMemory->bestSectors[0],
+           sharedMemory->bestSectors[1],
+           sharedMemory->bestSectors[2]);
 }

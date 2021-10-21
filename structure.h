@@ -3,6 +3,7 @@ typedef struct sharedMemory
     int seed;
     int numberOfCarsFinished;
     float allLapTimes[20];
+    float bestSectors[3];
     struct car
     {
         int carNumber;

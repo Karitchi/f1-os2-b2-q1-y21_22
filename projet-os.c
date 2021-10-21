@@ -12,20 +12,18 @@ void main(void)
     sharedMemory *sharedMemory;
 
     // Create shared memory and store it in struct.
-    shmId = shmget(1763, sizeof(*sharedMemory), IPC_CREAT | 0666);
+    shmId = shmget(2763, sizeof(*sharedMemory), IPC_CREAT | 0666);
     sharedMemory = shmat(shmId, NULL, 0);
 
     //Store time in seed to allow random times to be generated.
     sharedMemory->seed = time(NULL);
 
-    // Attribute 0 to counter variable.
     sharedMemory->numberOfCarsFinished = 0;
 
     generateChilds(&pId, &childId);
 
     if (!pId)
     {
-        // Attribute 0 to all counter variables.
         sharedMemory->car[childId].totalTime = 0;
         sharedMemory->car[childId].pitStops = 0;
         sharedMemory->car[childId].numberOfLaps = 0;
@@ -53,6 +51,7 @@ void main(void)
     {
         while (sharedMemory->numberOfCarsFinished != 20)
         {
+            findBestSectors(sharedMemory, childId);
             BubbleSort(sharedMemory);
             display(sharedMemory);
             sleep(1);
