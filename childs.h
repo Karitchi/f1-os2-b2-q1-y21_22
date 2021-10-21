@@ -6,7 +6,7 @@ float generateRandomNumber(sharedMemory *sharedMemory, int max, int added)
     return (float)rand() / (float)(RAND_MAX)*max + added;
 }
 
-void generateTimesP1(sharedMemory *sharedMemory, int childId)
+void generateSectorsTimesP1(sharedMemory *sharedMemory, int childId)
 {
     for (int i = 0; i < 3; i++)
     {
@@ -40,5 +40,13 @@ void generatePitStops(sharedMemory *sharedMemory, int childId)
     {
         sharedMemory->car[childId].pitStops++;
         sharedMemory->car[childId].lapTime += generateRandomNumber(sharedMemory, 9, 5);
+    }
+}
+
+void findBestLap(sharedMemory *sharedMemory, int childId)
+{
+    if (sharedMemory->car[childId].lapTime < sharedMemory->car[childId].bestLap)
+    {
+        sharedMemory->car[childId].bestLap = sharedMemory->car[childId].lapTime;
     }
 }

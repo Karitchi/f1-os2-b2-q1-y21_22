@@ -14,11 +14,6 @@ void generateChilds(int *pId, int *childId)
     }
 }
 
-void attributeNumberToEachCar(sharedMemory *sharedMemory, int carsNumber[], int childId)
-{
-    sharedMemory->car[childId].carNumber = carsNumber[childId];
-}
-
 void BubbleSort(sharedMemory *sharedMemory)
 {
     int i, j;
@@ -27,7 +22,7 @@ void BubbleSort(sharedMemory *sharedMemory)
     {
         for (j = 0; j < (20 - 1 - i); ++j)
         {
-            if (sharedMemory->car[j].lapTime > sharedMemory->car[j + 1].lapTime)
+            if (sharedMemory->car[j].bestLap > sharedMemory->car[j + 1].bestLap)
             {
                 temp = sharedMemory->car[j + 1];
                 sharedMemory->car[j + 1] = sharedMemory->car[j];
@@ -40,32 +35,34 @@ void BubbleSort(sharedMemory *sharedMemory)
 void display(sharedMemory *sharedMemory)
 {
     system("clear");
-    printf("|-----------------------------------------------------------------|\n");
-    printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | pit stop(s) |\n");
+    printf("|----------------------------------------------------------------------------------|\n");
+    printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | Best lap time  | pit stop(s) |\n");
     for (int i = 0; i < 20; i++)
     {
         if (i == 0)
         {
-            printf("|-----------------------------------------------------------------|\n");
-            printf(GRN "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |     %2d      |\n" RESET,
+            printf("|----------------------------------------------------------------------------------|\n");
+            printf(GRN "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |     %2d      |\n" RESET,
                    sharedMemory->car[i].carNumber,
                    sharedMemory->car[i].sector[0],
                    sharedMemory->car[i].sector[1],
                    sharedMemory->car[i].sector[2],
                    sharedMemory->car[i].lapTime,
+                   sharedMemory->car[i].bestLap,
                    sharedMemory->car[i].pitStops);
         }
         else
         {
-            printf("|-----------------------------------------------------------------|\n");
-            printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |     %2d      |\n",
+            printf("|----------------------------------------------------------------------------------|\n");
+            printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |     %2d      |\n",
                    sharedMemory->car[i].carNumber,
                    sharedMemory->car[i].sector[0],
                    sharedMemory->car[i].sector[1],
                    sharedMemory->car[i].sector[2],
                    sharedMemory->car[i].lapTime,
+                   sharedMemory->car[i].bestLap,
                    sharedMemory->car[i].pitStops);
         }
     }
-    printf("|-----------------------------------------------------------------|\n");
+    printf("|----------------------------------------------------------------------------------|\n");
 }

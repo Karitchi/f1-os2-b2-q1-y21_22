@@ -8,6 +8,8 @@ typedef struct sharedMemory
         int carNumber;
         float sector[3];
         float lapTime;
+        float bestLap;
+        int numberOfLaps;
         float totalTime;
         int pitStops;
     } car[20];
