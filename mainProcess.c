@@ -1,5 +1,51 @@
 #include "mainProcess.h"
 
+void *createSharedMemory(sharedMemory *sharedMemory, int shmId, int key)
+{
+    shmId = shmget(key, sizeof(*sharedMemory), IPC_CREAT | 0666);
+    return shmat(shmId, NULL, 0);
+}
+
+void choseRace(int *chosenRace, int *timeOfRace)
+{
+    printf("Choix de la course :\n");
+    printf("P1 : 1\n");
+    printf("P2 : 2\n");
+    printf("P3 : 3\n");
+    printf("\n");
+    printf("Q1 : 4\n");
+    printf("Q2 : 5\n");
+    printf("Q3 : 6\n");
+    printf("\n");
+    printf("Quitter le programme : 0\n");
+    scanf("%d", chosenRace);
+
+    if (!*chosenRace)
+    {
+        exit(0);
+    }
+    else if (*chosenRace == 1 || *chosenRace == 2)
+    {
+        *timeOfRace = 5400;
+    }
+    else if (*chosenRace == 3)
+    {
+        *timeOfRace = 3600;
+    }
+    else if (*chosenRace == 4)
+    {
+        *timeOfRace = 1080;
+    }
+    else if (*chosenRace == 5)
+    {
+        *timeOfRace = 900;
+    }
+    else
+    {
+        *timeOfRace = 720;
+    }
+}
+
 void generateChilds(int *pId, int *childId)
 {
     for (int i = 0; i < 20; i++)
@@ -63,8 +109,25 @@ void sortCarsByBestLap(sharedMemory *sharedMemory)
     }
 }
 
-void display(sharedMemory *sharedMemory)
+int display(sharedMemory *sharedMemory)
 {
+    if (sharedMemory->numberOfCarsFinished == 20)
+    {
+        printf("\n|-------------------------------------|\n");
+        printf("| Eliminated cars : ");
+
+        for (int i = 0; i < 20; i++)
+        {
+            if (sharedMemory->car[i].isEliminated)
+            {
+                printf("%2d ", sharedMemory->car[i].carNumber);
+            }
+        }
+        printf("|");
+        printf("\n|-------------------------------------|\n");
+
+        return 0;
+    }
     system("clear");
     printf("|------------------------------------------------------------------------------------------------------|\n");
     printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | best lap time  | total time  | pit stop(s) | out |\n");
