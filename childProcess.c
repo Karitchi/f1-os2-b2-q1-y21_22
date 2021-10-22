@@ -1,9 +1,19 @@
+#include "childProcess.h"
+
 float generateRandomNumber(sharedMemory *sharedMemory, int max, int added)
 {
 
     srand(sharedMemory->seed);
     sharedMemory->seed++;
     return (float)rand() / (float)(RAND_MAX)*max + added;
+}
+
+void initializeCountersTo0(sharedMemory *sharedMemory, int childId)
+{
+    sharedMemory->numberOfCarsFinished = 0;
+    sharedMemory->car[childId].totalTime = 0;
+    sharedMemory->car[childId].isOut = 0;
+    sharedMemory->car[childId].numberOfLaps = 0;
 }
 
 void generateSectorsTimesP1(sharedMemory *sharedMemory, int childId)
