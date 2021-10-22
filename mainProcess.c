@@ -1,5 +1,26 @@
 #include "mainProcess.h"
 
+void *createSharedMemory(sharedMemory *sharedMemory, int shmId, int key)
+{
+    shmId = shmget(key, sizeof(*sharedMemory), IPC_CREAT | 0666);
+    return shmat(shmId, NULL, 0);
+}
+
+void choseRace(int *chosenRace, int *timeOfRace)
+{
+    printf("Quelle course lancer? ");
+    scanf("%d", chosenRace);
+
+    if (*chosenRace == 0 || *chosenRace == 1)
+    {
+        *timeOfRace = 5400;
+    }
+    else
+    {
+        *timeOfRace = 3600;
+    }
+}
+
 void generateChilds(int *pId, int *childId)
 {
     for (int i = 0; i < 20; i++)

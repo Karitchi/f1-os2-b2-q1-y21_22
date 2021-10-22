@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include "colors.h"
 
+void *createSharedMemory(sharedMemory *sharedMemory, int shmId, int key);
+
+void choseRace(int *chosenRace, int *timeOfRace);
+
 void generateChilds(int *pId, int *childId);
 
 void initializeBestSectors(sharedMemory *sharedMemory);
