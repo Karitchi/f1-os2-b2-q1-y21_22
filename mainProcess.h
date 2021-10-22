@@ -15,7 +15,7 @@ void findBestSectors(sharedMemory *sharedMemory, int childId);
 
 void sortCarsByBestLap(sharedMemory *sharedMemory);
 
-void display(sharedMemory *sharedMemory);
+int display(sharedMemory *sharedMemory);
 
 void storeCarsInfoForSorting(sharedMemory *sharedMemory, sortedCars *sortedCars);
 
