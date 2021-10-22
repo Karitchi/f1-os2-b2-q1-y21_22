@@ -1,4 +1,12 @@
-#include "include.h"
+#include <time.h>
+#include <math.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include "struct.h"
+#include "mainProcess.c"
+#include "childProcess.c"
 
 void main(void)
 {
@@ -20,21 +28,17 @@ void main(void)
     //Store time in seed to allow random times to be generated.
     sharedMemory->seed = time(NULL);
 
-    sharedMemory->numberOfCarsFinished = 0;
-
     generateChilds(&pId, &childId);
 
     if (!pId)
     {
-        sharedMemory->car[childId].totalTime = 0;
-        sharedMemory->car[childId].isOut = 0;
-        sharedMemory->car[childId].numberOfLaps = 0;
-
-        //Attribute a number to each car.
-        sharedMemory->car[childId].carNumber = carsNumber[childId];
+        initializeCountersTo0(sharedMemory, childId);
 
         // Attribute an infinite number as first best lap.
         sharedMemory->car[childId].bestLap = INFINITY;
+
+        //Attribute a number to each car.
+        sharedMemory->car[childId].carNumber = carsNumber[childId];
 
         while (sharedMemory->car[childId].totalTime < timeOfP1P2 && !sharedMemory->car[childId].isOut)
         {
@@ -61,12 +65,12 @@ void main(void)
             display(sharedMemory);
             sleep(1);
         }
-        if (userRaceChoice[0] == "q")
-        {
-            storeCarsInfoForSorting(sharedMemory, sortedCars);
-            calculateAverageSpeed(sortedCars);
-            sortCarsByAverageSpeed(sortedCars);
-            eliminate5LastCars(sharedMemory, sortedCars);
-        }
+        // if (userRaceChoice[0] == "q")
+        // {
+        storeCarsInfoForSorting(sharedMemory, sortedCars);
+        calculateAverageSpeed(sortedCars);
+        sortCarsByAverageSpeed(sortedCars);
+        eliminate5LastCars(sharedMemory, sortedCars);
+        // }
     }
 }

@@ -1,4 +1,4 @@
-#include "colors.h"
+#include "mainProcess.h"
 
 void generateChilds(int *pId, int *childId)
 {
