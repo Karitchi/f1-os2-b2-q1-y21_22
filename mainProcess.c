@@ -6,43 +6,65 @@ void *createSharedMemory(sharedMemory *sharedMemory, int shmId, int key)
     return shmat(shmId, NULL, 0);
 }
 
+void initializeGPRelativeData(sharedMemory *sharedMemory, int *carNumbers)
+{
+    for (int i = 0; i < 20; i++)
+    {
+        sharedMemory->car[i].isEliminated = 0;
+        sharedMemory->car[i].carNumber = carNumbers[i];
+    }
+}
+
 void choseRace(int *chosenRace, int *timeOfRace)
 {
-    printf("Choix de la course :\n");
-    printf("P1 : 1\n");
-    printf("P2 : 2\n");
-    printf("P3 : 3\n");
+    printf("Essai 1 : 1\n");
+    printf("Essai 2 : 2\n");
+    printf("Essai 3 : 3\n");
     printf("\n");
-    printf("Q1 : 4\n");
-    printf("Q2 : 5\n");
-    printf("Q3 : 6\n");
+    printf("Qualification 1 : 4\n");
+    printf("Qualification 2 : 5\n");
+    printf("Qualification 3 : 6\n");
     printf("\n");
-    printf("Quitter le programme : 0\n");
+    printf("Course : 7\n");
+    printf("\n");
+    printf("Quitter : 0\n");
+    printf("\n");
+    printf("Choix : ");
+
     scanf("%d", chosenRace);
 
-    if (!*chosenRace)
+    switch (*chosenRace)
     {
+    case 0:
         exit(0);
-    }
-    else if (*chosenRace == 1 || *chosenRace == 2)
-    {
+        break;
+    case 1:
+    case 2:
         *timeOfRace = 5400;
-    }
-    else if (*chosenRace == 3)
-    {
+        break;
+
+    case 3:
         *timeOfRace = 3600;
-    }
-    else if (*chosenRace == 4)
-    {
+        break;
+    case 4:
         *timeOfRace = 1080;
-    }
-    else if (*chosenRace == 5)
-    {
+        break;
+    case 5:
         *timeOfRace = 900;
-    }
-    else
-    {
+        break;
+    default:
         *timeOfRace = 720;
+    }
+}
+
+void initializeRaceRelativeData(sharedMemory *sharedMemory)
+{
+    for (int i = 0; i < 20; i++)
+    {
+        sharedMemory->numberOfCarsFinished = 0;
+        sharedMemory->car[i].totalTime = 0;
+        sharedMemory->car[i].isOut = 0;
+        sharedMemory->car[i].bestLap = INFINITY;
     }
 }
 
@@ -68,15 +90,7 @@ void initializeBestSectors(sharedMemory *sharedMemory)
     }
 }
 
-void initializeIsOut(sharedMemory *sharedMemory)
-{
-    for (int i = 0; i < 20; i++)
-    {
-        sharedMemory->car[i].isEliminated = 0;
-    }
-}
-
-void findBestSectors(sharedMemory *sharedMemory, int childId)
+void findBestSectors(sharedMemory *sharedMemory)
 {
     for (int i = 0; i < 3; i++)
     {
@@ -111,29 +125,12 @@ void sortCarsByBestLap(sharedMemory *sharedMemory)
 
 int display(sharedMemory *sharedMemory)
 {
-    if (sharedMemory->numberOfCarsFinished == 20)
-    {
-        printf("\n|-------------------------------------|\n");
-        printf("| Eliminated cars : ");
-
-        for (int i = 0; i < 20; i++)
-        {
-            if (sharedMemory->car[i].isEliminated)
-            {
-                printf("%2d ", sharedMemory->car[i].carNumber);
-            }
-        }
-        printf("|");
-        printf("\n|-------------------------------------|\n");
-
-        return 0;
-    }
     system("clear");
     printf("|------------------------------------------------------------------------------------------------------|\n");
     printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | best lap time  | total time  | pit stop(s) | out |\n");
     for (int i = 0; i < 20; i++)
     {
-        if (sharedMemory->car[i].isOut)
+        if (sharedMemory->car[i].isEliminated)
         {
             printf("|------------------------------------------------------------------------------------------------------|\n");
             printf(RED "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |\n" RESET,
@@ -147,10 +144,24 @@ int display(sharedMemory *sharedMemory)
                    sharedMemory->car[i].isPitStop,
                    sharedMemory->car[i].isOut);
         }
-        else if (sharedMemory->car[i].isPitStop)
+        else if (sharedMemory->car[i].isOut)
         {
             printf("|------------------------------------------------------------------------------------------------------|\n");
             printf(YEL "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |\n" RESET,
+                   sharedMemory->car[i].carNumber,
+                   sharedMemory->car[i].sector[0],
+                   sharedMemory->car[i].sector[1],
+                   sharedMemory->car[i].sector[2],
+                   sharedMemory->car[i].lapTime,
+                   sharedMemory->car[i].bestLap,
+                   sharedMemory->car[i].totalTime,
+                   sharedMemory->car[i].isPitStop,
+                   sharedMemory->car[i].isOut);
+        }
+        else if (sharedMemory->car[i].isPitStop)
+        {
+            printf("|------------------------------------------------------------------------------------------------------|\n");
+            printf(BLU "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |\n" RESET,
                    sharedMemory->car[i].carNumber,
                    sharedMemory->car[i].sector[0],
                    sharedMemory->car[i].sector[1],
@@ -203,52 +214,10 @@ int display(sharedMemory *sharedMemory)
     printf("|\n|--------------------------------------------------------|\n");
 }
 
-void storeCarsInfoForSorting(sharedMemory *sharedMemory, sortedCars *sortedCars)
+void eliminate5LastCars(sharedMemory *sharedMemory)
 {
-    for (int i = 0; i < 20; i++)
+    for (int i = 20; i > 14; i--)
     {
-        sortedCars[i].carNumber = sharedMemory->car[i].carNumber;
-        sortedCars[i].numberOfLaps = sharedMemory->car[i].numberOfLaps;
-        sortedCars[i].totalTime = sharedMemory->car[i].totalTime;
-    }
-}
-
-void calculateAverageSpeed(sortedCars *sortedCars)
-{
-    for (int i = 0; i < 20; i++)
-    {
-        sortedCars[i].averageSpeed = sortedCars[i].totalTime / sortedCars[i].numberOfLaps;
-    }
-}
-
-void sortCarsByAverageSpeed(sortedCars *sortedCars)
-{
-    int i, j;
-    struct sortedCars temp;
-    for (i = 0; i < (20 - 1); ++i)
-    {
-        for (j = 0; j < (20 - 1 - i); ++j)
-        {
-            if (sortedCars[j].averageSpeed > sortedCars[j + 1].averageSpeed)
-            {
-                temp = sortedCars[j + 1];
-                sortedCars[j + 1] = sortedCars[j];
-                sortedCars[j] = temp;
-            }
-        }
-    }
-}
-
-void eliminate5LastCars(sharedMemory *sharedMemory, sortedCars *sortedCars)
-{
-    for (int i = 0; i < 20; i++)
-    {
-        for (int j = 0; j < 5; j++)
-        {
-            if (sharedMemory->car[i].carNumber == sortedCars[19 - j].carNumber)
-            {
-                sharedMemory->car[i].isEliminated = 1;
-            }
-        }
+        sharedMemory->car[i].isEliminated = 1;
     }
 }

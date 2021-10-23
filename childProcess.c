@@ -1,22 +1,13 @@
+#include "random.c"
 #include "childProcess.h"
 
-float generateRandomNumber(sharedMemory *sharedMemory, int max, int added)
+void initializeLapRelativeData(sharedMemory *sharedMemory, int childId)
 {
-
-    srand(sharedMemory->seed);
-    sharedMemory->seed++;
-    return (float)rand() / (float)(RAND_MAX)*max + added;
+    sharedMemory->car[childId].isPitStop = 0;
+    sharedMemory->car[childId].lapTime = 0;
 }
 
-void initializeCountersTo0(sharedMemory *sharedMemory, int childId)
-{
-    sharedMemory->numberOfCarsFinished = 0;
-    sharedMemory->car[childId].totalTime = 0;
-    sharedMemory->car[childId].isOut = 0;
-    sharedMemory->car[childId].numberOfLaps = 0;
-}
-
-void generateSectorsTimesP1(sharedMemory *sharedMemory, int childId)
+void generateSectorsTimes(sharedMemory *sharedMemory, int childId)
 {
     for (int i = 0; i < 3; i++)
     {
@@ -26,8 +17,6 @@ void generateSectorsTimesP1(sharedMemory *sharedMemory, int childId)
 
 void calculateLapTime(sharedMemory *sharedMemory, int childId)
 {
-    sharedMemory->car[childId].lapTime = 0;
-
     for (int i = 0; i < 3; i++)
     {
         sharedMemory->car[childId].lapTime += sharedMemory->car[childId].sector[i];

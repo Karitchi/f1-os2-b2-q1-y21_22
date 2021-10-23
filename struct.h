@@ -12,7 +12,6 @@ typedef struct sharedMemory
         float sector[3];
         float lapTime;
         float bestLap;
-        int numberOfLaps;
         float totalTime;
         int isPitStop;
         int isOut;
@@ -20,11 +19,3 @@ typedef struct sharedMemory
     } car[20];
 
 } sharedMemory;
-
-typedef struct sortedCars
-{
-    int carNumber;
-    int numberOfLaps;
-    float totalTime;
-    float averageSpeed;
-} sortedCars;

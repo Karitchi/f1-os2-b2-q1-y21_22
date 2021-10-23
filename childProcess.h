@@ -1,8 +1,7 @@
-float generateRandomNumber(sharedMemory *sharedMemory, int max, int added);
 
-void initializeCountersTo0(sharedMemory *sharedMemory, int childId);
+void initializeLapRelativeData(sharedMemory *sharedMemory, int childId);
 
-void generateSectorsTimesP1(sharedMemory *sharedMemory, int childId);
+void generateSectorsTimes(sharedMemory *sharedMemory, int childId);
 
 void calculateLapTime(sharedMemory *sharedMemory, int childId);
 
