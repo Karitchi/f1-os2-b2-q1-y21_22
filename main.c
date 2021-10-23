@@ -39,10 +39,7 @@ void main(void)
     {
 
         // while time is not up, car is not out, car is not eliminated
-        while (
-            sharedMemory->car[childId].totalTime < timeOfRace &&
-            !sharedMemory->car[childId].isOut &&
-            !sharedMemory->car[childId].isEliminated)
+        while (sharedMemory->car[childId].totalTime < timeOfRace && !sharedMemory->car[childId].isOut)
         {
             initializeLapRelativeData(sharedMemory, childId);
             generateSectorsTimes(sharedMemory, childId);
