@@ -17,6 +17,7 @@ void initializeGPRelativeData(sharedMemory *sharedMemory, int *carNumbers)
 
 void choseRace(int *chosenRace, int *timeOfRace)
 {
+    system("clear");
     printf("Essai 1 : 1\n");
     printf("Essai 2 : 2\n");
     printf("Essai 3 : 3\n");
