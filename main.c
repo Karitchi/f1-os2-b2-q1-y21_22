@@ -1,10 +1,13 @@
 /*
-! Certaines voitures s'arrete avant la fin du temps
-! Certaines voitures s'affiche plusieurs fois parfois
-! La derniere voiture du premier classement n'est pas bien triee
+?semaphores?
+!bug: La derniere voiture du premier classement n'est pas bien triee
+!bug: Certaines voitures s'arrete avant la fin du temps (parfois)
+!bug: Certaines voitures s'affiche plusieurs fois (parfois)
 
-todo fichier recap
-todo nombre de seconde d'avance
+todo: fichUncommittedier recap
+todo: nombre de seconde d'avances
+
+?nombre de secondes d'avance par rapport au tour?
 */
 
 #include <time.h>
@@ -24,7 +27,7 @@ void main(void)
     sharedMemory *sharedMemory;
 
     int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
-    key = 777;
+    key = 888;
     sharedMemory = createSharedMemory(sharedMemory, shmId, key);
     sharedMemory->seed = time(NULL);
 
@@ -38,8 +41,10 @@ void main(void)
     if (!pId)
     {
 
-        // while time is not up, car is not out, car is not eliminated
-        while (sharedMemory->car[childId].totalTime < timeOfRace && !sharedMemory->car[childId].isOut)
+        // while time is not up, car is not out and car is not eliminated
+        while (sharedMemory->cars[childId].totalTime < timeOfRace &&
+               !sharedMemory->cars[childId].isOut &&
+               !sharedMemory->cars[childId].isEliminated)
         {
             initializeLapRelativeData(sharedMemory, childId);
             generateSectorsTimes(sharedMemory, childId);
@@ -48,6 +53,7 @@ void main(void)
             generatePitStops(sharedMemory, childId);
             generateOut(sharedMemory, childId, pId);
             findBestLap(sharedMemory, childId);
+            sharedMemory->cars[childId].numberOfLaps++;
             sleep(1);
         }
 
@@ -61,6 +67,9 @@ void main(void)
         {
             findBestSectors(sharedMemory);
             sortCarsByBestLap(sharedMemory);
+            calculateAvgSpeed(sharedMemory);
+            sortCarsByAvgSpeed(sharedMemory);
+            calculateTimeDifference(sharedMemory);
             display(sharedMemory);
             sleep(1);
         }

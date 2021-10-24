@@ -1,3 +1,4 @@
+#include "random.c"
 
 void initializeLapRelativeData(sharedMemory *sharedMemory, int childId);
 
