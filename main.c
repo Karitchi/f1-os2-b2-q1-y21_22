@@ -1,4 +1,6 @@
 /*
+! Certaines voitures s'affiche plusieurs fois parfois
+! La derniere voiture du premier classement n'est pas bien triee
 
 ?semaphores?
 !bug: La derniere voiture du premier classement n'est pas bien triee
