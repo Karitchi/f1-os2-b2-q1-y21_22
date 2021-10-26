@@ -8,8 +8,9 @@
 !bug: Certaines voitures s'affiche plusieurs fois (parfois)
 
 
-todo: fichUncommittedier recap
+todo: fichier recap
 todo: nombre de seconde d'avances
+todo: lire la memoire partagee grace a read
 
 ?nombre de secondes d'avance par rapport au tour?
 */
@@ -21,8 +22,6 @@ todo: nombre de seconde d'avances
 #include "struct.h"
 #include "mainProcess.c"
 #include "childProcess.c"
-
-sem_t semaphore;
 
 void main(void)
 {
@@ -39,12 +38,10 @@ void main(void)
     choseRace(&chosenRace, &timeOfRace);
     initializeRaceRelativeData(sharedMemory);
     initializeBestSectors(sharedMemory);
-    sem_init(&semaphore, 1, 1);
     generateChilds(&pId, &childId);
 
     if (!pId)
     {
-
         // while time is not up, car is not out, car is not eliminated
         while (
             sharedMemory->cars[childId].totalTime < timeOfRace &&
@@ -62,9 +59,7 @@ void main(void)
             sleep(1);
         }
 
-        sem_wait(&semaphore);
         sharedMemory->numberOfCarsFinished++;
-        sem_post(&semaphore);
     }
     else
     {
@@ -72,9 +67,6 @@ void main(void)
         {
             findBestSectors(sharedMemory);
             sortCarsByBestLap(sharedMemory);
-            calculateAvgSpeed(sharedMemory);
-            sortCarsByAvgSpeed(sharedMemory);
-            calculateTimeDifference(sharedMemory);
             display(sharedMemory);
             sleep(1);
         }

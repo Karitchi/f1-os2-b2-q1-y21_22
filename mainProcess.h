@@ -16,7 +16,6 @@ void generateChilds(int *pId, int *childId);
 
 void initializeBestSectors(sharedMemory *sharedMemory);
 
-
 void findBestSectors(sharedMemory *sharedMemory);
 
 void sortCarsByBestLap(sharedMemory *sharedMemory);
