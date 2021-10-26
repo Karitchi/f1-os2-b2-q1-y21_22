@@ -1,8 +1,10 @@
 /*
+
 ?semaphores?
 !bug: La derniere voiture du premier classement n'est pas bien triee
 !bug: Certaines voitures s'arrete avant la fin du temps (parfois)
 !bug: Certaines voitures s'affiche plusieurs fois (parfois)
+
 
 todo: fichUncommittedier recap
 todo: nombre de seconde d'avances
