@@ -22,13 +22,13 @@ sem_t semaphore;
 
 void main(void)
 {
-    int shmId, pId, childId, chosenRace, timeOfRace, key;
+    int shmId, pId, childId, chosenRace, timeOfRace;
+    int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
+    const int KEY = 777;
     const int RACE_LENGTH = 305;
     sharedMemory *sharedMemory;
+    sharedMemory = createSharedMemory(sharedMemory, shmId, KEY);
 
-    int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
-    key = 888;
-    sharedMemory = createSharedMemory(sharedMemory, shmId, key);
     sharedMemory->seed = time(NULL);
 
     initializeGPRelativeData(sharedMemory, carsNumbers);
