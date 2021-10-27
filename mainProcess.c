@@ -15,6 +15,14 @@ void initializeGPRelativeData(sharedMemory *sharedMemory, int *carNumbers)
     }
 }
 
+void initializeFinalRace(sharedMemory *sharedMemory)
+{
+    for (int i = 0; i < 20; i++)
+    {
+        sharedMemory->cars[i].isEliminated = 0;
+    }
+}
+
 void choseRace(int *chosenRace, int *timeOfRace)
 {
     printf("Essai 1 : 1\n");
@@ -61,9 +69,15 @@ void initializeRaceRelativeData(sharedMemory *sharedMemory)
 {
     for (int i = 0; i < 20; i++)
     {
+        for (int j = 0; j < 3; j++)
+        {
+            sharedMemory->cars[i].sector[j] = INFINITY;
+        }
         sharedMemory->numberOfCarsFinished = 0;
+        sharedMemory->cars[i].lapTime = 0;
         sharedMemory->cars[i].totalTime = 0;
         sharedMemory->cars[i].isOut = 0;
+        sharedMemory->cars[i].isPitStop = 0;
         sharedMemory->cars[i].numberOfLaps = 0;
         sharedMemory->cars[i].bestLap = INFINITY;
     }
@@ -91,7 +105,7 @@ void initializeBestSectors(sharedMemory *sharedMemory)
     }
 }
 
-void placeCarsOnGrid(sharedMemory *sharedMemory)
+void addTimesToCars(sharedMemory *sharedMemory)
 {
     int timeAdded = 0;
 

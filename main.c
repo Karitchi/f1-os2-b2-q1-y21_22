@@ -24,7 +24,7 @@ void main(void)
 {
     int shmId, pId, childId, timeOfRace, chosenRace;
     int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
-    const int KEY = 88;
+    const int KEY = 500;
     const int RACE_LENGTH = 305;
     sharedMemory *sharedMemory;
     sharedMemory = createSharedMemory(sharedMemory, shmId, KEY);
@@ -40,14 +40,15 @@ void main(void)
         initializeBestSectors(sharedMemory);
         if (chosenRace == 7)
         {
-            initializeGPRelativeData(sharedMemory, carsNumbers);
-            placeCarsOnGrid(sharedMemory);
+            initializeFinalRace(sharedMemory);
+            display(sharedMemory);
+            sleep(1);
+            addTimesToCars(sharedMemory);
         }
         generateChilds(&pId, &childId);
 
         if (!pId)
         {
-
             // while time is not up, car is not out, car is not eliminated
             while (
                 sharedMemory->cars[childId].totalTime < timeOfRace &&
