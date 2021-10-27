@@ -1,7 +1,4 @@
 /*
-! Certaines voitures s'affiche plusieurs fois parfois
-! La derniere voiture du premier classement n'est pas bien triee
-
 ?semaphores?
 !bug: La derniere voiture du premier classement n'est pas bien triee
 !bug: Certaines voitures s'arrete avant la fin du temps (parfois)
@@ -29,6 +26,7 @@ void main(void)
     int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
     const int KEY = 777;
     const int RACE_LENGTH = 305;
+    sharedMemory sharedMemoryCopy;
     sharedMemory *sharedMemory;
     sharedMemory = createSharedMemory(sharedMemory, shmId, KEY);
 
@@ -65,15 +63,17 @@ void main(void)
     {
         while (sharedMemory->numberOfCarsFinished != 20)
         {
-            findBestSectors(sharedMemory);
-            sortCarsByBestLap(sharedMemory);
-            display(sharedMemory);
+            // Copy sharedMemory into sharedMemoryCopy.
+            sharedMemoryCopy = *sharedMemory;
+            findBestSectors(&sharedMemoryCopy);
+            sortCarsByBestLap(&sharedMemoryCopy);
+            display(&sharedMemoryCopy);
             sleep(1);
         }
         if (chosenRace == 4 || chosenRace == 5)
         {
-            eliminate5LastCars(sharedMemory);
-            display(sharedMemory);
+            eliminate5LastCars(&sharedMemoryCopy);
+            display(&sharedMemoryCopy);
         }
     }
 }
