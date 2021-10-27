@@ -22,58 +22,66 @@ todo: lire la memoire partagee grace a read
 
 void main(void)
 {
-    int shmId, pId, childId, chosenRace, timeOfRace;
+    int shmId, pId, childId, timeOfRace, chosenRace;
     int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
-    const int KEY = 777;
+    const int KEY = 88;
     const int RACE_LENGTH = 305;
-    sharedMemory sharedMemoryCopy;
     sharedMemory *sharedMemory;
     sharedMemory = createSharedMemory(sharedMemory, shmId, KEY);
 
     sharedMemory->seed = time(NULL);
 
     initializeGPRelativeData(sharedMemory, carsNumbers);
-    choseRace(&chosenRace, &timeOfRace);
-    initializeRaceRelativeData(sharedMemory);
-    initializeBestSectors(sharedMemory);
-    generateChilds(&pId, &childId);
 
-    if (!pId)
+    while (1)
     {
-        // while time is not up, car is not out, car is not eliminated
-        while (
-            sharedMemory->cars[childId].totalTime < timeOfRace &&
-            !sharedMemory->cars[childId].isOut &&
-            !sharedMemory->cars[childId].isEliminated)
+        choseRace(&chosenRace, &timeOfRace);
+        initializeRaceRelativeData(sharedMemory);
+        initializeBestSectors(sharedMemory);
+        if (chosenRace == 7)
         {
-            initializeLapRelativeData(sharedMemory, childId);
-            generateSectorsTimes(sharedMemory, childId);
-            calculateLapTime(sharedMemory, childId);
-            calculateTotalTime(sharedMemory, childId);
-            generatePitStops(sharedMemory, childId);
-            generateOut(sharedMemory, childId, pId);
-            findBestLap(sharedMemory, childId);
-            sharedMemory->cars[childId].numberOfLaps++;
-            sleep(1);
+            initializeGPRelativeData(sharedMemory, carsNumbers);
+            placeCarsOnGrid(sharedMemory);
         }
+        generateChilds(&pId, &childId);
 
-        sharedMemory->numberOfCarsFinished++;
-    }
-    else
-    {
-        while (sharedMemory->numberOfCarsFinished != 20)
+        if (!pId)
         {
-            // Copy sharedMemory into sharedMemoryCopy.
-            sharedMemoryCopy = *sharedMemory;
-            findBestSectors(&sharedMemoryCopy);
-            sortCarsByBestLap(&sharedMemoryCopy);
-            display(&sharedMemoryCopy);
-            sleep(1);
+
+            // while time is not up, car is not out, car is not eliminated
+            while (
+                sharedMemory->cars[childId].totalTime < timeOfRace &&
+                !sharedMemory->cars[childId].isOut &&
+                !sharedMemory->cars[childId].isEliminated)
+            {
+                initializeLapRelativeData(sharedMemory, childId);
+                generateSectorsTimes(sharedMemory, childId);
+                calculateLapTime(sharedMemory, childId);
+                calculateTotalTime(sharedMemory, childId);
+                generatePitStops(sharedMemory, childId);
+                generateOut(sharedMemory, childId, pId);
+                findBestLap(sharedMemory, childId);
+                sharedMemory->cars[childId].numberOfLaps++;
+                sleep(1);
+            }
+
+            sharedMemory->numberOfCarsFinished++;
+            exit(0);
         }
-        if (chosenRace == 4 || chosenRace == 5)
+        else
         {
-            eliminate5LastCars(&sharedMemoryCopy);
-            display(&sharedMemoryCopy);
+            while (sharedMemory->numberOfCarsFinished != 20)
+            {
+                findBestSectors(sharedMemory);
+                sortCarsByBestLap(sharedMemory);
+                display(sharedMemory);
+                sleep(1);
+            }
+            if (chosenRace == 4 || chosenRace == 5)
+            {
+                eliminate5LastCars(sharedMemory);
+                display(sharedMemory);
+            }
         }
     }
 }

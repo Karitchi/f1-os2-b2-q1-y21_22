@@ -24,10 +24,7 @@ void calculateLapTime(sharedMemory *sharedMemory, int childId)
 
 void calculateTotalTime(sharedMemory *sharedMemory, int childId)
 {
-    for (int i = 0; i < 3; i++)
-    {
-        sharedMemory->cars[childId].totalTime += sharedMemory->cars[childId].sector[i];
-    }
+    sharedMemory->cars[childId].totalTime += sharedMemory->cars[childId].lapTime;
 }
 
 void generatePitStops(sharedMemory *sharedMemory, int childId)
