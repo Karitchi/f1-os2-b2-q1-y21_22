@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <fcntl.h>
+
 #include "colors.h"
 
 void *createSharedMemory(sharedMemory *sharedMemory, int shmId, int key);

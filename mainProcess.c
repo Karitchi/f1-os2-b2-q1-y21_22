@@ -257,6 +257,124 @@ int display(sharedMemory *sharedMemory)
     printf("|\n|--------------------------------------------------------|\n");
 }
 
+void displayWithoutColors(sharedMemory *sharedMemory)
+{
+    printf("|-----------------------------------------------------------------------------------------------------------------|\n");
+    printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | best lap time  | total time  | pit stop(s) | out | interval |\n");
+    for (int i = 0; i < 20; i++)
+    {
+        if (sharedMemory->cars[i].isEliminated)
+        {
+            printf("|-----------------------------------------------------------------------------------------------------------------|\n");
+
+            printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |  +%3.3f  |\n",
+                   sharedMemory->cars[i].carNumber,
+                   sharedMemory->cars[i].sector[0],
+                   sharedMemory->cars[i].sector[1],
+                   sharedMemory->cars[i].sector[2],
+                   sharedMemory->cars[i].lapTime,
+                   sharedMemory->cars[i].bestLap,
+                   sharedMemory->cars[i].totalTime,
+                   sharedMemory->cars[i].isPitStop,
+                   sharedMemory->cars[i].isOut,
+                   sharedMemory->cars[i].interval);
+        }
+        else if (sharedMemory->cars[i].isOut)
+        {
+            printf("|-----------------------------------------------------------------------------------------------------------------|\n");
+            printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |  +%3.3f  |\n",
+                   sharedMemory->cars[i].carNumber,
+                   sharedMemory->cars[i].sector[0],
+                   sharedMemory->cars[i].sector[1],
+                   sharedMemory->cars[i].sector[2],
+                   sharedMemory->cars[i].lapTime,
+                   sharedMemory->cars[i].bestLap,
+                   sharedMemory->cars[i].totalTime,
+                   sharedMemory->cars[i].isPitStop,
+                   sharedMemory->cars[i].isOut,
+                   sharedMemory->cars[i].interval);
+        }
+        else if (sharedMemory->cars[i].isPitStop)
+        {
+            printf("|-----------------------------------------------------------------------------------------------------------------|\n");
+            printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |  +%3.3f  |\n",
+                   sharedMemory->cars[i].carNumber,
+                   sharedMemory->cars[i].sector[0],
+                   sharedMemory->cars[i].sector[1],
+                   sharedMemory->cars[i].sector[2],
+                   sharedMemory->cars[i].lapTime,
+                   sharedMemory->cars[i].bestLap,
+                   sharedMemory->cars[i].totalTime,
+                   sharedMemory->cars[i].isPitStop,
+                   sharedMemory->cars[i].isOut,
+                   sharedMemory->cars[i].interval);
+        }
+        else if (i == 0)
+        {
+            printf("|-----------------------------------------------------------------------------------------------------------------|\n");
+            printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |  +%3.3f  |\n",
+                   sharedMemory->cars[i].carNumber,
+                   sharedMemory->cars[i].sector[0],
+                   sharedMemory->cars[i].sector[1],
+                   sharedMemory->cars[i].sector[2],
+                   sharedMemory->cars[i].lapTime,
+                   sharedMemory->cars[i].bestLap,
+                   sharedMemory->cars[i].totalTime,
+                   sharedMemory->cars[i].isPitStop,
+                   sharedMemory->cars[i].isOut,
+                   sharedMemory->cars[i].interval);
+        }
+        else
+        {
+            printf("|-----------------------------------------------------------------------------------------------------------------|\n");
+            printf("|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |  +%3.3f  |\n",
+                   sharedMemory->cars[i].carNumber,
+                   sharedMemory->cars[i].sector[0],
+                   sharedMemory->cars[i].sector[1],
+                   sharedMemory->cars[i].sector[2],
+                   sharedMemory->cars[i].lapTime,
+                   sharedMemory->cars[i].bestLap,
+                   sharedMemory->cars[i].totalTime,
+                   sharedMemory->cars[i].isPitStop,
+                   sharedMemory->cars[i].isOut,
+                   sharedMemory->cars[i].interval);
+        }
+    }
+    printf("|-----------------------------------------------------------------------------------------------------------------|\n");
+
+    printf("|--------------------------------------------------------|\n");
+    printf("| best sector 1    | best sector 2    | best sector 3    |\n");
+    printf("|--------------------------------------------------------|\n");
+    for (int i = 0; i < 3; i++)
+    {
+        printf("|  %2d : %.3f     ",
+               sharedMemory->bestSectorCars[i],
+               sharedMemory->bestSectorTimes[i]);
+    }
+    printf("|\n|--------------------------------------------------------|\n");
+}
+
+int writeDisplayToFile(sharedMemory *sharedMemory, int chosenRace)
+{
+    char fileName[7][256] = {"P1.txt", "P2.txt", "P3.txt", "Q1.txt", "Q2.txt", "Q3.txt", "Final"};
+    // Save stdout to reset it after.
+    int savedStdout = dup(1);
+
+    // Open or create file.
+    int fd = open(fileName[chosenRace - 1], O_WRONLY | O_CREAT, 0777);
+
+    // Set stdout to the file.
+    dup2(fd, STDOUT_FILENO);
+
+    displayWithoutColors(sharedMemory);
+
+    // Reset stdout.
+    dup2(savedStdout, 1);
+
+    close(fd);
+    close(savedStdout);
+}
+
 void eliminate5LastCars(sharedMemory *sharedMemory)
 {
     int numberEliminatedCars = 0;

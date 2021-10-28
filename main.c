@@ -82,6 +82,7 @@ void main(void)
                 eliminate5LastCars(sharedMemory);
                 display(sharedMemory);
             }
+            writeDisplayToFile(sharedMemory, chosenRace);
         }
     }
 }
