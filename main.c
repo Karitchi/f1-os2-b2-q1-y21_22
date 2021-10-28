@@ -5,8 +5,9 @@
 !bug: Certaines voitures s'affiche plusieurs fois (parfois)
 
 
-todo: fichier recap
 todo: lire la memoire partagee grace a read
+todo: course finale
+todo: nettoyage du code
 todo: semaphores
 */
 
