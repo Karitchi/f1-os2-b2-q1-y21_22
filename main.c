@@ -6,10 +6,8 @@
 
 
 todo: fichier recap
-todo: nombre de seconde d'avances
 todo: lire la memoire partagee grace a read
-
-?nombre de secondes d'avance par rapport au tour?
+todo: semaphores
 */
 
 #include <time.h>
