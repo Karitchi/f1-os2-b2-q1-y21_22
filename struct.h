@@ -19,5 +19,6 @@ typedef struct sharedMemory
         int isPitStop;
         int isOut;
         int isEliminated;
+        float interval;
     } cars[20];
 } sharedMemory;

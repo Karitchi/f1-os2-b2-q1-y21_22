@@ -24,7 +24,7 @@ void main(void)
 {
     int shmId, pId, childId, timeOfRace, chosenRace;
     int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
-    const int KEY = 500;
+    const int KEY = 499;
     const int RACE_LENGTH = 305;
     sharedMemory *sharedMemory;
     sharedMemory = createSharedMemory(sharedMemory, shmId, KEY);
@@ -75,6 +75,7 @@ void main(void)
             {
                 findBestSectors(sharedMemory);
                 sortCarsByBestLap(sharedMemory);
+                calculateInterval(sharedMemory);
                 display(sharedMemory);
                 sleep(1);
             }
