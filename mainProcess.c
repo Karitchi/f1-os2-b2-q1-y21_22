@@ -107,12 +107,12 @@ void initializeBestSectors(sharedMemory *sharedMemory)
 
 void addTimesToCars(sharedMemory *sharedMemory)
 {
-    int timeAdded = 0;
+    float timeAdded = 0;
 
     for (int i = 0; i < 20; i++)
     {
         sharedMemory->cars[i].totalTime += timeAdded;
-        timeAdded += 1;
+        timeAdded += 0.5;
     }
 }
 
