@@ -159,6 +159,17 @@ void sortCarsByBestLap(sharedMemory *sharedMemory)
     }
 }
 
+void placeOutCarsLastPlace(sharedMemory *sharedMemory)
+{
+    for (int i = 0; i < 20; i++)
+    {
+        if (sharedMemory->cars[i].isOut)
+        {
+            sharedMemory->cars[i].totalTime = INFINITY;
+        }
+    }
+}
+
 void sortCarsByAvgSpeed(sharedMemory *sharedMemory)
 {
     int i, j;
@@ -197,26 +208,26 @@ void calculateIntervalAvgSpeed(sharedMemory *sharedMemory)
 
 int display(sharedMemory *sharedMemory)
 {
-    // system("clear");
+    system("clear");
     printf("|--------------------------------------------------------------------------------------------------------------------|\n");
     printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | best lap time  | total time  | pit stop(s) | out |  interval   |\n");
     for (int i = 0; i < 20; i++)
     {
         if (sharedMemory->cars[i].isEliminated)
         {
-            printf("|--------------------------------------------------------------------------------------------------------------------|\n");
+            // printf("|--------------------------------------------------------------------------------------------------------------------|\n");
 
-            printf(RED "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |  +%8.3f  |\n" RESET,
-                   sharedMemory->cars[i].carNumber,
-                   sharedMemory->cars[i].sector[0],
-                   sharedMemory->cars[i].sector[1],
-                   sharedMemory->cars[i].sector[2],
-                   sharedMemory->cars[i].lapTime,
-                   sharedMemory->cars[i].bestLap,
-                   sharedMemory->cars[i].totalTime,
-                   sharedMemory->cars[i].isPitStop,
-                   sharedMemory->cars[i].isOut,
-                   sharedMemory->cars[i].interval);
+            // printf(RED "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |  +%8.3f  |\n" RESET,
+            //        sharedMemory->cars[i].carNumber,
+            //        sharedMemory->cars[i].sector[0],
+            //        sharedMemory->cars[i].sector[1],
+            //        sharedMemory->cars[i].sector[2],
+            //        sharedMemory->cars[i].lapTime,
+            //        sharedMemory->cars[i].bestLap,
+            //        sharedMemory->cars[i].totalTime,
+            //        sharedMemory->cars[i].isPitStop,
+            //        sharedMemory->cars[i].isOut,
+            //        sharedMemory->cars[i].interval);
         }
         else if (sharedMemory->cars[i].isOut)
         {

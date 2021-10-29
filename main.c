@@ -5,8 +5,6 @@
 !bug: Certaines voitures s'affiche plusieurs fois (parfois)
 
 
-todo: lire la memoire partagee grace a read
-todo: course finale
 todo: nettoyage du code
 todo: semaphores
 */
@@ -25,7 +23,7 @@ void main(void)
     float timeOfRace;
     int numberOfLapsLeft = 1000;
     int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
-    const int KEY = 499;
+    const int KEY = 888;
     const int RACE_LENGTH = 305;
     sharedMemory *sharedMemory;
     sharedMemory = createSharedMemory(sharedMemory, shmId, KEY);
@@ -69,7 +67,7 @@ void main(void)
                 numberOfLapsLeft--;
                 sleep(1);
             }
-
+            sharedMemory->cars[childId].isPitStop = 0;
             sharedMemory->numberOfCarsFinished++;
             exit(0);
         }
@@ -85,6 +83,7 @@ void main(void)
                 }
                 else
                 {
+                    placeOutCarsLastPlace(sharedMemory);
                     sortCarsByAvgSpeed(sharedMemory);
                     calculateIntervalAvgSpeed(sharedMemory);
                 }
@@ -94,8 +93,8 @@ void main(void)
             if (chosenRace == 4 || chosenRace == 5)
             {
                 eliminate5LastCars(sharedMemory);
-                display(sharedMemory);
             }
+            display(sharedMemory);
             writeDisplayToFile(sharedMemory, chosenRace);
         }
     }
