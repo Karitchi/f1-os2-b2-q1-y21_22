@@ -8,7 +8,7 @@
 
 void *createSharedMemory(sharedMemory *sharedMemory, int shmId, int key);
 
-void choseRace(int *chosenRace, int *timeOfRace);
+void choseRace(int *chosenRace, float *timeOfRace);
 
 void initializeGPRelativeData(sharedMemory *sharedMemory, int *carNumbers);
 

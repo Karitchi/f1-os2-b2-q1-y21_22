@@ -21,7 +21,9 @@ todo: semaphores
 
 void main(void)
 {
-    int shmId, pId, childId, timeOfRace, chosenRace;
+    int shmId, pId, childId, chosenRace, trackLength;
+    float timeOfRace;
+    int numberOfLapsLeft = 1000;
     int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
     const int KEY = 499;
     const int RACE_LENGTH = 305;
@@ -39,6 +41,7 @@ void main(void)
         initializeBestSectors(sharedMemory);
         if (chosenRace == 7)
         {
+            calculateNumberOfLaps(&trackLength, &numberOfLapsLeft, RACE_LENGTH);
             initializeFinalRace(sharedMemory);
             display(sharedMemory);
             sleep(1);
@@ -52,7 +55,8 @@ void main(void)
             while (
                 sharedMemory->cars[childId].totalTime < timeOfRace &&
                 !sharedMemory->cars[childId].isOut &&
-                !sharedMemory->cars[childId].isEliminated)
+                !sharedMemory->cars[childId].isEliminated &&
+                numberOfLapsLeft)
             {
                 initializeLapRelativeData(sharedMemory, childId);
                 generateSectorsTimes(sharedMemory, childId);
@@ -62,6 +66,7 @@ void main(void)
                 generateOut(sharedMemory, childId, pId);
                 findBestLap(sharedMemory, childId);
                 sharedMemory->cars[childId].numberOfLaps++;
+                numberOfLapsLeft--;
                 sleep(1);
             }
 
@@ -73,8 +78,16 @@ void main(void)
             while (sharedMemory->numberOfCarsFinished != 20)
             {
                 findBestSectors(sharedMemory);
-                sortCarsByBestLap(sharedMemory);
-                calculateInterval(sharedMemory);
+                if (chosenRace != 7)
+                {
+                    sortCarsByBestLap(sharedMemory);
+                    calculateIntervalBestLap(sharedMemory);
+                }
+                else
+                {
+                    sortCarsByAvgSpeed(sharedMemory);
+                    calculateIntervalAvgSpeed(sharedMemory);
+                }
                 display(sharedMemory);
                 sleep(1);
             }
