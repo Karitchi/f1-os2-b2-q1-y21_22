@@ -62,7 +62,8 @@ void choseRace(int *chosenRace, float *timeOfRace)
         break;
     case 6:
         *timeOfRace = 720;
-    default:
+        break;
+    case 7:
         *timeOfRace = INFINITY;
     }
 }
@@ -403,7 +404,7 @@ void displayWithoutColors(sharedMemory *sharedMemory)
 
 int writeDisplayToFile(sharedMemory *sharedMemory, int chosenRace)
 {
-    char fileName[7][256] = {"P1.txt", "P2.txt", "P3.txt", "Q1.txt", "Q2.txt", "Q3.txt", "Final"};
+    char fileName[7][256] = {"P1.txt", "P2.txt", "P3.txt", "Q1.txt", "Q2.txt", "Q3.txt", "Final.txt"};
     // Save stdout to reset it after.
     int savedStdout = dup(1);
 
