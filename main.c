@@ -7,6 +7,12 @@
 
 todo: nettoyage du code
 todo: semaphores
+todo: appuyer sur enter pour continuer
+todo: lire et ecrire dans un fichier les resultats
+
+todo: -voitures terminent tour et incrementent numberOfCarFinishedLap (1 ere semaphore)
+todo: -quand numberOfCarFinishedLap = 20 le deuxieme semaphore est incremente par la derniere voiture
+todo: -le pere peut alors lire et decremente le semaphore 
 */
 
 #include <time.h>
@@ -23,12 +29,18 @@ void main(void)
     float timeOfRace;
     int numberOfLapsLeft = 1000;
     int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
-    const int KEY = 888;
+    const int KEY = 2345;
     const int RACE_LENGTH = 305;
     sharedMemory *sharedMemory;
     sharedMemory = createSharedMemory(sharedMemory, shmId, KEY);
+    int value = 0;
+
+    sharedMemory->nbWriter = 20;
 
     sharedMemory->seed = time(NULL);
+
+    sem_init(&sharedMemory->readerSemaphore, 1, 0);
+    sem_init(&sharedMemory->writerSemaphore, 1, 20);
 
     initializeGPRelativeData(sharedMemory, carsNumbers);
 
@@ -45,6 +57,7 @@ void main(void)
             sleep(1);
             addTimesToCars(sharedMemory);
         }
+
         generateChilds(&pId, &childId);
 
         if (!pId)
@@ -56,6 +69,8 @@ void main(void)
                 !sharedMemory->cars[childId].isEliminated &&
                 numberOfLapsLeft)
             {
+                sem_wait(&sharedMemory->writerSemaphore);
+                sharedMemory->nbWriter--;
                 initializeLapRelativeData(sharedMemory, childId);
                 generateSectorsTimes(sharedMemory, childId);
                 calculateLapTime(sharedMemory, childId);
@@ -65,16 +80,25 @@ void main(void)
                 findBestLap(sharedMemory, childId);
                 sharedMemory->cars[childId].numberOfLaps++;
                 numberOfLapsLeft--;
+                sharedMemory->nbWriter++;
+
+                if (sharedMemory->nbWriter == 20)
+                {
+                    sem_post(&sharedMemory->readerSemaphore);
+                }
                 sleep(1);
             }
             sharedMemory->cars[childId].isPitStop = 0;
             sharedMemory->numberOfCarsFinished++;
+
             exit(0);
         }
         else
         {
             while (sharedMemory->numberOfCarsFinished != 20)
             {
+                sem_wait(&sharedMemory->readerSemaphore);
+
                 findBestSectors(sharedMemory);
                 if (chosenRace != 7)
                 {
@@ -88,6 +112,11 @@ void main(void)
                     calculateIntervalAvgSpeed(sharedMemory);
                 }
                 display(sharedMemory);
+                for (int i = 0; i < 20; i++)
+                {
+                    sem_post(&sharedMemory->writerSemaphore);
+                }
+
                 sleep(1);
             }
             if (chosenRace == 4 || chosenRace == 5)
@@ -98,4 +127,6 @@ void main(void)
             writeDisplayToFile(sharedMemory, chosenRace);
         }
     }
+    sem_destroy(&sharedMemory->readerSemaphore);
+    sem_destroy(&sharedMemory->writerSemaphore);
 }

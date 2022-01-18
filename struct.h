@@ -1,11 +1,15 @@
 typedef struct sharedMemory
 {
+    sem_t readerSemaphore;
+    sem_t writerSemaphore;
     int seed;
     int numberOfCarsFinished;
     int counterForCarPosition;
     float allLapTimes[20];
     float bestSectorTimes[3];
     int bestSectorCars[3];
+    int nbWriter;
+
     struct cars
     {
         int carNumber;

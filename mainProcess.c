@@ -209,7 +209,7 @@ void calculateIntervalAvgSpeed(sharedMemory *sharedMemory)
 
 int display(sharedMemory *sharedMemory)
 {
-    system("clear");
+    // system("clear");
     printf("|--------------------------------------------------------------------------------------------------------------------|\n");
     printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | best lap time  | total time  | pit stop(s) | out |  interval   |\n");
     for (int i = 0; i < 20; i++)
