@@ -1,18 +1,10 @@
 /*
-?semaphores?
 !bug: La derniere voiture du premier classement n'est pas bien triee
 !bug: Certaines voitures s'arrete avant la fin du temps (parfois)
 !bug: Certaines voitures s'affiche plusieurs fois (parfois)
 
-
-todo: nettoyage du code
-todo: semaphores
 todo: appuyer sur enter pour continuer
 todo: lire et ecrire dans un fichier les resultats
-
-todo: -voitures terminent tour et incrementent numberOfCarFinishedLap (1 ere semaphore)
-todo: -quand numberOfCarFinishedLap = 20 le deuxieme semaphore est incremente par la derniere voiture
-todo: -le pere peut alors lire et decremente le semaphore 
 */
 
 #include <time.h>
@@ -33,16 +25,7 @@ void main(void)
     const int RACE_LENGTH = 305;
     sharedMemory *sharedMemory;
     sharedMemory = createSharedMemory(sharedMemory, shmId, KEY);
-    int value = 0;
-
-    sharedMemory->nbWriter = 20;
-
-    sharedMemory->seed = time(NULL);
-
-    sem_init(&sharedMemory->readerSemaphore, 1, 0);
-    sem_init(&sharedMemory->writerSemaphore, 1, 20);
-
-    initializeGPRelativeData(sharedMemory, carsNumbers);
+    initializeData(sharedMemory, carsNumbers);
 
     while (1)
     {
@@ -63,11 +46,10 @@ void main(void)
         if (!pId)
         {
             // while time is not up, car is not out, car is not eliminated
-            while (
-                sharedMemory->cars[childId].totalTime < timeOfRace &&
-                !sharedMemory->cars[childId].isOut &&
-                !sharedMemory->cars[childId].isEliminated &&
-                numberOfLapsLeft)
+            while (sharedMemory->cars[childId].totalTime < timeOfRace &&
+                   !sharedMemory->cars[childId].isOut &&
+                   !sharedMemory->cars[childId].isEliminated &&
+                   numberOfLapsLeft)
             {
                 sem_wait(&sharedMemory->writerSemaphore);
                 sharedMemory->nbWriter--;
@@ -81,11 +63,7 @@ void main(void)
                 sharedMemory->cars[childId].numberOfLaps++;
                 numberOfLapsLeft--;
                 sharedMemory->nbWriter++;
-
-                if (sharedMemory->nbWriter == 20)
-                {
-                    sem_post(&sharedMemory->readerSemaphore);
-                }
+                incrementReaderSem(sharedMemory);
                 sleep(1);
             }
             sharedMemory->cars[childId].isPitStop = 0;
@@ -98,8 +76,8 @@ void main(void)
             while (sharedMemory->numberOfCarsFinished != 20)
             {
                 sem_wait(&sharedMemory->readerSemaphore);
-
                 findBestSectors(sharedMemory);
+
                 if (chosenRace != 7)
                 {
                     sortCarsByBestLap(sharedMemory);
@@ -111,14 +89,12 @@ void main(void)
                     sortCarsByAvgSpeed(sharedMemory);
                     calculateIntervalAvgSpeed(sharedMemory);
                 }
-                display(sharedMemory);
-                for (int i = 0; i < 20; i++)
-                {
-                    sem_post(&sharedMemory->writerSemaphore);
-                }
 
+                display(sharedMemory);
+                incrementwriterSem(sharedMemory);
                 sleep(1);
             }
+
             if (chosenRace == 4 || chosenRace == 5)
             {
                 eliminate5LastCars(sharedMemory);
@@ -127,6 +103,5 @@ void main(void)
             writeDisplayToFile(sharedMemory, chosenRace);
         }
     }
-    sem_destroy(&sharedMemory->readerSemaphore);
-    sem_destroy(&sharedMemory->writerSemaphore);
+    DestroySem(sharedMemory);
 }

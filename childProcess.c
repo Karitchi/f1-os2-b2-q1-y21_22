@@ -55,3 +55,11 @@ void findBestLap(sharedMemory *sharedMemory, int childId)
         sharedMemory->cars[childId].bestLap = sharedMemory->cars[childId].lapTime;
     }
 }
+
+void incrementReaderSem(sharedMemory *sharedMemory)
+{
+    if (sharedMemory->nbWriter == 20)
+    {
+        sem_post(&sharedMemory->readerSemaphore);
+    }
+}

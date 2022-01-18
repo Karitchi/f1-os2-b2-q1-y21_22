@@ -6,8 +6,14 @@ void *createSharedMemory(sharedMemory *sharedMemory, int shmId, int key)
     return shmat(shmId, NULL, 0);
 }
 
-void initializeGPRelativeData(sharedMemory *sharedMemory, int *carNumbers)
+void initializeData(sharedMemory *sharedMemory, int *carNumbers)
 {
+    sem_init(&sharedMemory->readerSemaphore, 1, 0);
+    sem_init(&sharedMemory->writerSemaphore, 1, 20);
+
+    sharedMemory->nbWriter = 20;
+    sharedMemory->seed = time(NULL);
+
     for (int i = 0; i < 20; i++)
     {
         sharedMemory->cars[i].isEliminated = 0;
@@ -305,6 +311,14 @@ int display(sharedMemory *sharedMemory)
     printf("|\n|--------------------------------------------------------|\n");
 }
 
+void incrementwriterSem(sharedMemory *sharedMemory)
+{
+    for (int i = 0; i < 20 - sharedMemory->numberOfCarsFinished; i++)
+    {
+        sem_post(&sharedMemory->writerSemaphore);
+    }
+}
+
 void displayWithoutColors(sharedMemory *sharedMemory)
 {
     printf("|--------------------------------------------------------------------------------------------------------------------|\n");
@@ -427,7 +441,7 @@ void eliminate5LastCars(sharedMemory *sharedMemory)
 {
     int numberEliminatedCars = 0;
 
-    for (int i = 20; i > 0; i--)
+    for (int i = 19; i > 0; i--)
     {
         if (!sharedMemory->cars[i].isEliminated)
         {
@@ -439,4 +453,10 @@ void eliminate5LastCars(sharedMemory *sharedMemory)
             break;
         }
     }
+}
+
+void DestroySem(sharedMemory *sharedMemory)
+{
+    sem_destroy(&sharedMemory->readerSemaphore);
+    sem_destroy(&sharedMemory->writerSemaphore);
 }
