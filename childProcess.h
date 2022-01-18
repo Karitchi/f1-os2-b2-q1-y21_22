@@ -13,3 +13,5 @@ void generatePitStops(sharedMemory *sharedMemory, int childId);
 void generateOut(sharedMemory *sharedMemory, int childId, int pId);
 
 void findBestLap(sharedMemory *sharedMemory, int childId);
+
+void incrementReaderSem(sharedMemory *sharedMemory);

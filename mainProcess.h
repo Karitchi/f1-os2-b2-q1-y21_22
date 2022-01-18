@@ -8,7 +8,7 @@
 
 void *createSharedMemory(sharedMemory *sharedMemory, int shmId, int key);
 
-void initializeSMData(sharedMemory *sharedMemory, int *carNumbers);
+void initializeData(sharedMemory *sharedMemory, int *carNumbers);
 
 void initializeFinalRace(sharedMemory *sharedMemory);
 
@@ -38,8 +38,12 @@ void calculateIntervalAvgSpeed(sharedMemory *sharedMemory);
 
 int display(sharedMemory *sharedMemory);
 
+void incrementwriterSem(sharedMemory *sharedMemory);
+
 void displayWithoutColors(sharedMemory *sharedMemory);
 
 int writeDisplayToFile(sharedMemory *sharedMemory, int chosenRace);
 
 void eliminate5LastCars(sharedMemory *sharedMemory);
+
+void DestroySem(sharedMemory *sharedMemory);
