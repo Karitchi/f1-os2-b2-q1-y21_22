@@ -11,7 +11,7 @@ void initializeData(sharedMemory *sharedMemory, int *carNumbers)
     sem_init(&sharedMemory->readerSemaphore, 1, 0);
     sem_init(&sharedMemory->writerSemaphore, 1, 20);
 
-    sharedMemory->nbWriter = 20;
+    sharedMemory->nbProcessWriting = 20;
     sharedMemory->seed = time(NULL);
 
     for (int i = 0; i < 20; i++)
@@ -44,7 +44,6 @@ void choseRace(int *chosenRace, float *timeOfRace)
     printf("Quitter : 0\n");
     printf("\n");
     printf("Choix : ");
-
     scanf("%d", chosenRace);
 
     switch (*chosenRace)
@@ -215,7 +214,7 @@ void calculateIntervalAvgSpeed(sharedMemory *sharedMemory)
 
 int display(sharedMemory *sharedMemory)
 {
-    // system("clear");
+    system("clear");
     printf("|--------------------------------------------------------------------------------------------------------------------|\n");
     printf("| car  | sector 1 | sector 2 | sector 3 | lap time  | best lap time  | total time  | pit stop(s) | out |  interval   |\n");
     for (int i = 0; i < 20; i++)

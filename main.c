@@ -1,12 +1,3 @@
-/*
-!bug: La derniere voiture du premier classement n'est pas bien triee
-!bug: Certaines voitures s'arrete avant la fin du temps (parfois)
-!bug: Certaines voitures s'affiche plusieurs fois (parfois)
-
-todo: appuyer sur enter pour continuer
-todo: lire et ecrire dans un fichier les resultats
-*/
-
 #include <time.h>
 #include <math.h>
 #include <unistd.h>
@@ -52,7 +43,7 @@ void main(void)
                    numberOfLapsLeft)
             {
                 sem_wait(&sharedMemory->writerSemaphore);
-                sharedMemory->nbWriter--;
+                sharedMemory->nbProcessWriting--;
                 initializeLapRelativeData(sharedMemory, childId);
                 generateSectorsTimes(sharedMemory, childId);
                 calculateLapTime(sharedMemory, childId);
@@ -62,7 +53,7 @@ void main(void)
                 findBestLap(sharedMemory, childId);
                 sharedMemory->cars[childId].numberOfLaps++;
                 numberOfLapsLeft--;
-                sharedMemory->nbWriter++;
+                sharedMemory->nbProcessWriting++;
                 incrementReaderSem(sharedMemory);
                 sleep(1);
             }

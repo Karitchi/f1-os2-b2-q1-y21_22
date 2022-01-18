@@ -8,7 +8,7 @@ typedef struct sharedMemory
     float allLapTimes[20];
     float bestSectorTimes[3];
     int bestSectorCars[3];
-    int nbWriter;
+    int nbProcessWriting;
 
     struct cars
     {

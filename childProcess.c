@@ -58,7 +58,7 @@ void findBestLap(sharedMemory *sharedMemory, int childId)
 
 void incrementReaderSem(sharedMemory *sharedMemory)
 {
-    if (sharedMemory->nbWriter == 20)
+    if (sharedMemory->nbProcessWriting == 20)
     {
         sem_post(&sharedMemory->readerSemaphore);
     }
