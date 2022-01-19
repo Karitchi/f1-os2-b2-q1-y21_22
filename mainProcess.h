@@ -12,7 +12,7 @@ void initializeData(sharedMemory *sharedMemory, int *carNumbers);
 
 void initializeFinalRace(sharedMemory *sharedMemory);
 
-void choseRace(int *chosenRace, float *timeOfRace);
+void choseRace(sharedMemory *sharedMemory,int *chosenRace, float *timeOfRace);
 
 void calculateNumberOfLaps(int *trackLength, int *numberOfLaps, const int RACE_LENGTH);
 

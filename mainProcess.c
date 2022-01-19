@@ -29,7 +29,7 @@ void initializeFinalRace(sharedMemory *sharedMemory)
     }
 }
 
-void choseRace(int *chosenRace, float *timeOfRace)
+void choseRace(sharedMemory *sharedMemory, int *chosenRace, float *timeOfRace)
 {
     printf("Essai 1 : 1\n");
     printf("Essai 2 : 2\n");
@@ -49,6 +49,9 @@ void choseRace(int *chosenRace, float *timeOfRace)
     switch (*chosenRace)
     {
     case 0:
+        DestroySem(sharedMemory);
+        shmdt(sharedMemory);
+
         exit(0);
         break;
     case 1:
@@ -221,19 +224,19 @@ int display(sharedMemory *sharedMemory)
     {
         if (sharedMemory->cars[i].isEliminated)
         {
-            // printf("|--------------------------------------------------------------------------------------------------------------------|\n");
+            printf("|--------------------------------------------------------------------------------------------------------------------|\n");
 
-            // printf(RED "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |  +%8.3f  |\n" RESET,
-            //        sharedMemory->cars[i].carNumber,
-            //        sharedMemory->cars[i].sector[0],
-            //        sharedMemory->cars[i].sector[1],
-            //        sharedMemory->cars[i].sector[2],
-            //        sharedMemory->cars[i].lapTime,
-            //        sharedMemory->cars[i].bestLap,
-            //        sharedMemory->cars[i].totalTime,
-            //        sharedMemory->cars[i].isPitStop,
-            //        sharedMemory->cars[i].isOut,
-            //        sharedMemory->cars[i].interval);
+            printf(RED "|  %2d  |  %3.3f  |  %3.3f  |  %3.3f  |  %3.3f  |    %3.3f     |  %8.3f   |     %2d      |  %d  |  +%8.3f  |\n" RESET,
+                   sharedMemory->cars[i].carNumber,
+                   sharedMemory->cars[i].sector[0],
+                   sharedMemory->cars[i].sector[1],
+                   sharedMemory->cars[i].sector[2],
+                   sharedMemory->cars[i].lapTime,
+                   sharedMemory->cars[i].bestLap,
+                   sharedMemory->cars[i].totalTime,
+                   sharedMemory->cars[i].isPitStop,
+                   sharedMemory->cars[i].isOut,
+                   sharedMemory->cars[i].interval);
         }
         else if (sharedMemory->cars[i].isOut)
         {

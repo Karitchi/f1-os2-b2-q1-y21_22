@@ -12,7 +12,7 @@ void main(void)
     float timeOfRace;
     int numberOfLapsLeft = 1000;
     int carsNumbers[] = {44, 77, 11, 33, 3, 4, 5, 18, 14, 31, 16, 55, 10, 22, 7, 99, 9, 47, 6, 63};
-    const int KEY = 2345;
+    const int KEY = 666;
     const int RACE_LENGTH = 305;
     sharedMemory *sharedMemory;
     sharedMemory = createSharedMemory(sharedMemory, shmId, KEY);
@@ -20,7 +20,7 @@ void main(void)
 
     while (1)
     {
-        choseRace(&chosenRace, &timeOfRace);
+        choseRace(sharedMemory, &chosenRace, &timeOfRace);
         initializeRaceRelativeData(sharedMemory);
         initializeBestSectors(sharedMemory);
         if (chosenRace == 7)
@@ -94,5 +94,4 @@ void main(void)
             writeDisplayToFile(sharedMemory, chosenRace);
         }
     }
-    DestroySem(sharedMemory);
 }
